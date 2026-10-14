@@ -73,21 +73,24 @@ em { font: italic 1.02em/1 var(--serif); letter-spacing: 0; }
   .btn-ink:hover { background: var(--ink-3); }
 }
 
-/* Fixed layers: backdrop colour/glow/grid, then the 3D canvas, then content */
-.bg { position: fixed; inset: 0; z-index: 0; background: var(--ink); transition: background-color 900ms var(--ease-io); }
-.bg::before { content: ""; position: absolute; inset: -20%; background:
-  radial-gradient(42% 50% at 72% 42%, rgba(232,137,58,.55), rgba(232,137,58,0) 70%),
-  radial-gradient(30% 35% at 20% 80%, rgba(111,227,212,.16), rgba(111,227,212,0) 70%);
-  opacity: var(--glow, 1); transition: opacity 900ms var(--ease-io); filter: blur(10px); }
-.bg::after { content: ""; position: absolute; inset: 0; opacity: var(--grid, 0); transition: opacity 900ms var(--ease-io);
-  background-image: linear-gradient(rgba(111,227,212,.16) 1px, transparent 1px), linear-gradient(90deg, rgba(111,227,212,.16) 1px, transparent 1px);
-  background-size: 56px 56px; -webkit-mask-image: radial-gradient(70% 70% at 50% 50%, #000 30%, transparent 100%); mask-image: radial-gradient(70% 70% at 50% 50%, #000 30%, transparent 100%); }
-body[data-bg="wash"] .bg { background: var(--teal); --glow: 0; --grid: 1; }
-body[data-bg="cream"] .bg { background: var(--cream); --glow: 0; --grid: 0; }
-body[data-bg="dark"] .bg { background: var(--ink); --glow: 0; --grid: 0; }
-body[data-bg="glow"] .bg { background: var(--ink); --glow: 1; --grid: 0; }
+/* The 3D canvas is fixed between section backgrounds and section content */
 #gl { position: fixed; inset: 0; z-index: 1; width: 100%; height: 100%; pointer-events: none; }
-main, header, footer, .dock { position: relative; z-index: 2; }
+header, footer, .dock { position: relative; z-index: 2; }
+main { position: relative; }
+/* Every section paints its own background, so its colour never depends on scroll direction.
+   Backgrounds sit below the 3D canvas (z 0), content sits above it (z 2). */
+section { position: relative; }
+section::before { content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+section > * { position: relative; z-index: 2; }
+footer { background: var(--ink); }
+.hero::before, .closer::before { background:
+  radial-gradient(42% 50% at 72% 42%, rgba(232,137,58,.5), rgba(232,137,58,0) 70%),
+  radial-gradient(30% 35% at 20% 80%, rgba(111,227,212,.14), rgba(111,227,212,0) 70%), var(--ink); }
+.wash::before { background-color: var(--teal);
+  background-image: linear-gradient(rgba(111,227,212,.13) 1px, transparent 1px), linear-gradient(90deg, rgba(111,227,212,.13) 1px, transparent 1px);
+  background-size: 56px 56px; }
+.giant::before, .pricing::before { background: var(--cream); }
+.faq-sec::before { background: var(--ink); }
 
 /* Header: a thin glass bar that inverts on cream sections */
 .site-header { position: fixed; top: 0; left: 0; right: 0; z-index: 30; padding-top: env(safe-area-inset-top, 0px); color: var(--fg); transition: color 500ms var(--ease-io); }
@@ -163,8 +166,8 @@ body[data-bg="cream"] .site-header::before { background: rgba(241,236,227,.55); 
 .price-grid { display: grid; gap: 24px; grid-template-areas: "main" "quote" "table"; }
 .price-main { grid-area: main; min-width: 0; } .quote { grid-area: quote; } .table-box { grid-area: table; }
 @media (min-width: 980px) { .price-grid { grid-template-columns: 1.3fr .7fr; grid-template-areas: "main quote" "table quote"; column-gap: 32px; } }
-.seg { position: relative; display: grid; grid-template-columns: repeat(2, 1fr); background: var(--cream-2); border-radius: 999px; padding: 4px; max-width: 540px; }
-.seg .pill { position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc((100% - 8px) / 2); border-radius: 999px; background: var(--ink); transform: translateX(calc(var(--i, 0) * 100%)); transition: transform 280ms var(--ease); }
+.seg { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); background: var(--cream-2); border-radius: 999px; padding: 4px; max-width: 540px; }
+.seg .pill { position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc((100% - 8px) / 3); border-radius: 999px; background: var(--ink); transform: translateX(calc(var(--i, 0) * 100%)); transition: transform 280ms var(--ease); }
 .seg button { position: relative; z-index: 1; min-height: 50px; border: 0; background: transparent; border-radius: 999px; color: var(--fg-dim); font: 600 15px/1.1 var(--display); cursor: pointer; display: grid; place-items: center; gap: 3px; padding: 6px 4px; transition: color 200ms var(--ease); }
 .seg button small { font-weight: 500; font-size: 12px; }
 .seg button[aria-pressed="true"] { color: var(--cream); }
@@ -181,6 +184,7 @@ body[data-bg="cream"] .site-header::before { background: rgba(241,236,227,.55); 
 .can-add .badge { position: absolute; top: 8px; right: 8px; min-width: 26px; height: 26px; padding: 0 7px; border-radius: 999px; background: var(--ink); color: var(--amber); font: 800 14px/26px var(--display); font-variant-numeric: tabular-nums; }
 .can-add .cname { margin-top: 6px; font-weight: 600; font-size: 14px; line-height: 1.2; }
 .can-add .cgal { font-size: 12px; color: var(--fg-dim); line-height: 1.2; }
+.can-add .cpct { font-size: 12px; font-weight: 600; color: #B4570F; min-height: 1.2em; }
 .can-add .cprice { margin-top: 3px; font: 800 15px/1.2 var(--display); font-variant-numeric: tabular-nums; }
 .can-minus { min-height: 36px; border: 0; background: transparent; color: var(--fg-dim); font: 500 13px/1 var(--display); border-radius: 8px; cursor: pointer; transition: transform 150ms var(--ease), color 150ms var(--ease); }
 .can-minus:active { transform: scale(0.97); }
@@ -256,7 +260,6 @@ footer { padding: 40px 0 calc(28px + env(safe-area-inset-bottom, 0px)); border-t
 </style>
 </head>
 <body data-bg="glow">
-<div class="bg" aria-hidden="true"></div>
 <canvas id="gl" aria-hidden="true"></canvas>
 
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
@@ -309,7 +312,7 @@ footer { padding: 40px 0 calc(28px + env(safe-area-inset-bottom, 0px)); border-t
       <div class="wash-title wrap" style="left:0;right:0"><p class="eyebrow">How it works</p><h2 id="how-title" class="display h-sec" style="margin-top:12px">nothing changes <em>for you.</em></h2></div>
       <div class="wash-body wrap">
         <div class="steps" id="steps">
-          <div class="step on"><span class="n">01</span><span class="tag">Today</span><h3>Pick your cans and a plan.</h3><p>A monthly plan or a one-time clean. Tell us which cans you have and where you live.</p></div>
+          <div class="step on"><span class="n">01</span><span class="tag">Today</span><h3>Pick your cans and a plan.</h3><p>A monthly or quarterly plan, or a one-time clean. Tell us which cans you have and where you live.</p></div>
           <div class="step"><span class="n">02</span><span class="tag">Pickup day, by 6 am</span><h3>Roll them out like always.</h3><p>Your cans go to the curb for Bainbridge Disposal, same as every week. The truck empties them.</p></div>
           <div class="step"><span class="n">03</span><span class="tag">After the truck</span><h3>We wash them right there.</h3><p>Hot pressurized water, a scrub of the lid, walls, bottom and handle, then deodorizer. Left where we found them.</p></div>
         </div>
@@ -344,13 +347,14 @@ footer { padding: 40px 0 calc(28px + env(safe-area-inset-bottom, 0px)); border-t
       <div class="head">
         <p class="eyebrow fade">Pricing</p>
         <h2 id="price-title" class="display h-sec reveal">tap your cans, <em>see</em> your price.</h2>
-        <p class="lede fade">Prices are per can, per visit, and the same for any size can. The monthly plan saves $14 to $15 a can on every visit.</p>
+        <p class="lede fade">Prices are per can, per visit, and the same for any size can. Compared with a one-time clean, the monthly plan saves up to 33% and the quarterly plan up to 11%.</p>
       </div>
       <div class="price-grid">
         <div class="price-main">
           <div class="seg" role="group" aria-label="Choose a plan" id="seg">
             <span class="pill" aria-hidden="true"></span>
-            <button type="button" data-plan="monthly" aria-pressed="true">Monthly plan<small>every pickup month</small></button>
+            <button type="button" data-plan="monthly" aria-pressed="true">Monthly<small id="pct-monthly">save up to 33%</small></button>
+            <button type="button" data-plan="quarterly" aria-pressed="false">Quarterly<small id="pct-quarterly">save up to 11%</small></button>
             <button type="button" data-plan="once" aria-pressed="false">One-time<small>single visit</small></button>
           </div>
           <div class="builder">
@@ -361,7 +365,7 @@ footer { padding: 40px 0 calc(28px + env(safe-area-inset-bottom, 0px)); border-t
         <div class="table-box">
           <table>
             <caption class="sr">Price per can, per visit</caption>
-            <thead><tr><th scope="col">Can</th><th scope="col" data-col="monthly">Monthly plan</th><th scope="col" data-col="once">One-time</th><th scope="col">Monthly saves</th></tr></thead>
+            <thead><tr><th scope="col">Can</th><th scope="col" data-col="monthly">Monthly</th><th scope="col" data-col="quarterly">Quarterly</th><th scope="col" data-col="once">One-time</th></tr></thead>
             <tbody id="price-rows"></tbody>
           </table>
         </div>
@@ -370,7 +374,7 @@ footer { padding: 40px 0 calc(28px + env(safe-area-inset-bottom, 0px)); border-t
           <div class="big" id="t-visit" aria-live="polite">$65<small> per visit</small></div>
           <div class="rows">
             <div><span id="t-plan">Monthly plan</span><span id="t-count">2 cans</span></div>
-            <div><span id="t-save-label">Compared with one-time</span><span class="save" id="t-save">Save $29</span></div>
+            <div><span id="t-save-label">Compared with one-time</span><span class="save" id="t-save">Save $29 (31%)</span></div>
           </div>
           <p class="fine">Same price for any size can. No contract; pause or cancel any time.</p>
           <a class="btn btn-amber" id="t-book" href="sms:+12063127948">Text us this quote <svg aria-hidden="true"><use href="#arrow"/></svg></a>
@@ -390,7 +394,7 @@ footer { padding: 40px 0 calc(28px + env(safe-area-inset-bottom, 0px)); border-t
         <details><summary>What happens to the dirty water?<span class="pm"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1 V13 M1 7 H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span></summary><p>We catch all of it. Washington rules say mobile washers can't let wash water reach the ground, storm drains or surface water, so we collect it on our rig and take it to an approved disposal site.</p></details>
         <details><summary>How do I pay?<span class="pm"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1 V13 M1 7 H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span></summary><p>You pay per can, per visit. With a card on file we charge it after each visit; otherwise we send you an invoice, due within 10 days.</p></details>
         <details><summary>Can I pause or cancel?<span class="pm"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1 V13 M1 7 H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span></summary><p>Yes, any time. Just let us know at least 48 hours before your next visit. There's no contract.</p></details>
-        <details><summary>Why is the monthly plan cheaper?<span class="pm"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1 V13 M1 7 H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span></summary><p>Regular visits keep grime from building up, and they let us plan efficient routes on each street. We pass that on to you, so a monthly clean costs $14 to $15 less per can than a one-time clean.</p></details>
+        <details><summary>Why is the monthly plan cheaper?<span class="pm"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1 V13 M1 7 H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span></summary><p>Regular visits keep grime from building up, and they let us plan efficient routes on each street. We pass that on to you: a monthly clean costs up to 33% less per can than a one-time clean, and a quarterly clean up to 11% less.</p></details>
       </div>
     </div>
   </section>
@@ -456,21 +460,24 @@ document.documentElement.classList.add("js");
 
   /* ---------- Section themes (backdrop colour) ---------- */
   var sections = Array.prototype.slice.call(document.querySelectorAll("section[data-bg]"));
-  var themeIO = new IntersectionObserver(function (es) {
-    es.forEach(function (e) { if (e.isIntersecting) document.body.dataset.bg = e.target.dataset.bg; });
-  }, { rootMargin: "-45% 0px -45% 0px", threshold: 0 });
-  sections.forEach(function (s) { themeIO.observe(s); });
+  function headerTheme() { // the section under the header bar decides whether the header text is light or dark
+    var y = window.scrollY + 40, i, s, bg = "glow";
+    for (i = 0; i < sections.length; i++) { s = sections[i]; if (y >= s.offsetTop && y < s.offsetTop + s.offsetHeight) { bg = s.dataset.bg; break; } }
+    if (document.body.dataset.bg !== bg) document.body.dataset.bg = bg;
+  }
   var dock = $("dock");
   new IntersectionObserver(function (es) { dock.classList.toggle("hide", es[0].isIntersecting); }, { threshold: 0.25 }).observe($("signup"));
 
   /* ---------- Pricing: the same three services and prices as our Flyra price book ---------- */
   var CANS = [
-    { id: "garbage", name: "Garbage", sub: "any size", price: { monthly: 35, once: 49 }, n: 1 },
-    { id: "recycle", name: "Recycling", sub: "any size", price: { monthly: 30, once: 45 }, n: 1 },
-    { id: "compost", name: "Compost", sub: "yard & food waste", price: { monthly: 35, once: 49 }, n: 0 }
+    { id: "garbage", name: "Garbage", sub: "any size", price: { monthly: 35, quarterly: 44, once: 49 }, n: 1 },
+    { id: "recycle", name: "Recycling", sub: "any size", price: { monthly: 30, quarterly: 40, once: 45 }, n: 1 },
+    { id: "compost", name: "Compost", sub: "yard & food waste", price: { monthly: 35, quarterly: 44, once: 49 }, n: 0 }
   ];
-  var PLANS = { monthly: "Monthly plan", once: "One-time clean" };
-  var ORDER = ["monthly", "once"];
+  var PLANS = { monthly: "Monthly plan", quarterly: "Quarterly plan", once: "One-time clean" };
+  var ORDER = ["monthly", "quarterly", "once"];
+  var pct = function (part, whole) { return Math.round((1 - part / whole) * 100); };
+  ["monthly", "quarterly"].forEach(function (p) { $("pct-" + p).textContent = "save up to " + Math.max.apply(null, CANS.map(function (c) { return pct(c.price[p], c.price.once); })) + "%"; });
   var plan = "monthly";
   var money = function (v) { var r = Math.round(v * 100) / 100; return "$" + (r % 1 ? r.toFixed(2) : String(r)); };
   var pop = function (el, from) {
@@ -479,8 +486,9 @@ document.documentElement.classList.add("js");
   };
   function renderTable() {
     $("price-rows").innerHTML = CANS.map(function (c) {
-      return "<tr><td>" + c.name + "<small>" + c.sub + "</small></td>" + ORDER.map(function (p) { return '<td class="' + (p === plan ? "on" : "") + '">' + money(c.price[p]) + "</td>"; }).join("") +
-        "<td>" + money(c.price.once - c.price.monthly) + "<small>per visit</small></td></tr>";
+      return "<tr><td>" + c.name + "<small>" + c.sub + "</small></td>" + ORDER.map(function (p) {
+        return '<td class="' + (p === plan ? "on" : "") + '">' + money(c.price[p]) + "<small>" + (p === "once" ? "full price" : pct(c.price[p], c.price.once) + "% off") + "</small></td>";
+      }).join("") + "</tr>";
     }).join("");
     document.querySelectorAll("thead th[data-col]").forEach(function (th) { th.classList.toggle("on", th.dataset.col === plan); });
   }
@@ -490,7 +498,7 @@ document.documentElement.classList.add("js");
       return '<div class="cantile' + (c.n ? " on" : "") + '">' +
         '<button type="button" class="can-add" data-id="' + c.id + '" data-d="1" aria-label="Add a ' + label + ', ' + c.n + ' added">' +
         '<svg viewBox="0 0 64 104" aria-hidden="true"><use href="#can-' + c.id + '"/></svg>' + (c.n ? '<span class="badge">' + c.n + "</span>" : "") +
-        '<span class="cname">' + c.name + '</span><span class="cgal">' + c.sub + '</span><span class="cprice">' + money(c.price[plan]) + "</span></button>" +
+        '<span class="cname">' + c.name + '</span><span class="cgal">' + c.sub + '</span><span class="cprice">' + money(c.price[plan]) + '</span><span class="cpct">' + (plan === "once" ? "" : pct(c.price[plan], c.price.once) + "% off") + "</span></button>" +
         '<button type="button" class="can-minus" data-id="' + c.id + '" data-d="-1" aria-label="Remove a ' + label + '"' + (c.n ? "" : " disabled") + ">Remove</button></div>";
     }).join("");
   }
@@ -500,8 +508,8 @@ document.documentElement.classList.add("js");
     $("t-visit").innerHTML = money(visit) + "<small> per visit</small>";
     $("t-plan").textContent = PLANS[plan];
     $("t-count").textContent = count + (count === 1 ? " can" : " cans");
-    if (plan === "monthly") { $("t-save-label").textContent = "Compared with one-time"; $("t-save").textContent = once > visit ? "Save " + money(once - visit) : "Pick a can"; }
-    else { $("t-save-label").textContent = "On the monthly plan"; $("t-save").textContent = count ? money(monthly) + " per visit" : "Pick a can"; }
+    if (plan !== "once") { $("t-save-label").textContent = "Compared with one-time"; $("t-save").textContent = once > visit ? "Save " + money(once - visit) + " (" + pct(visit, once) + "%)" : "Pick a can"; }
+    else { $("t-save-label").textContent = "On the monthly plan"; $("t-save").textContent = count ? money(monthly) + " per visit (" + pct(monthly, once) + "% off)" : "Pick a can"; }
     var lines = CANS.filter(function (c) { return c.n; }).map(function (c) { return c.n + " x " + c.name.toLowerCase(); });
     $("t-book").href = "sms:+12063127948?&body=" + encodeURIComponent("Hi Kitsap Cans, I'd like to sign up.\n" + PLANS[plan] + ": " + (lines.length ? lines.join(", ") : "no cans picked yet") + " = " + money(visit) + " per visit.\nMy address is: ");
     if (animate) pop($("t-visit"), "translateY(6px)");
@@ -537,6 +545,7 @@ document.documentElement.classList.add("js");
   function onScroll() {
     var max = document.documentElement.scrollHeight - vh();
     progress.style.setProperty("--p", (window.scrollY / max).toFixed(4));
+    headerTheme();
     washU = washProgress();
     var idx = washU < 0.34 ? 0 : washU < 0.67 ? 1 : 2;
     steps.forEach(function (s, i) { s.classList.toggle("on", i === idx); });
