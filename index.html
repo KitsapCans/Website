@@ -9,7 +9,17 @@
 <meta name="color-scheme" content="dark">
 <meta property="og:title" content="Kitsap Cans · The can you'd rather not touch, washed at the curb.">
 <meta property="og:description" content="Garbage, recycling and yard-waste can cleaning at the curb on Bainbridge Island.">
-<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2064%2064%22%3E%3Ccircle%20cx%3D%2232%22%20cy%3D%2232%22%20r%3D%2232%22%20fill%3D%22%230B0F12%22/%3E%3Cpath%20d%3D%22M20%2022h24l-3%2024H23z%22%20fill%3D%22%23E8893A%22/%3E%3Crect%20x%3D%2217%22%20y%3D%2217%22%20width%3D%2230%22%20height%3D%225%22%20rx%3D%222%22%20fill%3D%22%23F1ECE3%22/%3E%3C/svg%3E">
+<link rel="icon" href="/favicon.ico" sizes="48x48">
+<link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png">
+<link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="canonical" href="https://kitsapcans.com/">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://kitsapcans.com/">
+<meta property="og:site_name" content="Kitsap Cans">
+<meta property="og:image" content="https://kitsapcans.com/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "LocalBusiness", "name": "Kitsap Cans", "url": "https://kitsapcans.com/", "logo": "https://kitsapcans.com/logo.png", "image": "https://kitsapcans.com/logo.png", "telephone": "+1-206-312-7948", "email": "kitsapcans@gmail.com", "description": "Garbage, recycling and compost can cleaning on Bainbridge Island, WA.", "areaServed": {"@type": "City", "name": "Bainbridge Island, WA"}}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter+Tight:wght@400;500;600;800&family=Instrument+Serif:ital@0;1&display=swap">
@@ -98,8 +108,13 @@ footer { background: var(--ink); }
 body[data-bg="cream"] .site-header { --fg: #0B0F12; --fg-dim: rgba(11,15,18,.62); --line: rgba(11,15,18,.16); }
 body[data-bg="cream"] .site-header::before { background: rgba(241,236,227,.55); }
 .nav { position: relative; display: flex; align-items: center; justify-content: space-between; min-height: 72px; }
-.brand { display: inline-flex; align-items: baseline; gap: 2px; font: 800 20px/1 var(--display); letter-spacing: -0.03em; text-decoration: none; }
+.brand { display: inline-flex; align-items: center; gap: 10px; font: 800 20px/1 var(--display); letter-spacing: -0.03em; text-decoration: none; }
 .brand i { font-style: normal; color: var(--amber); }
+.brand .mark { width: 30px; height: 46px; flex: none; overflow: visible; filter: drop-shadow(0 4px 10px rgba(47,179,166,.28)); transition: transform 160ms var(--ease); }
+.brand:active .mark { transform: scale(0.94); }
+.mark-spark { transform-box: fill-box; transform-origin: center; transition: transform 420ms var(--ease); }
+@media (hover: hover) and (pointer: fine) { .brand:hover .mark-spark { transform: rotate(90deg) scale(1.15); } }
+@media (prefers-reduced-motion: reduce) { .brand .mark, .mark-spark { transition: none; } .brand:active .mark { transform: none; } }
 .nav-links { display: flex; align-items: center; gap: 30px; }
 .nav-links a:not(.btn) { font-size: 14px; font-weight: 500; color: var(--fg-dim); text-decoration: none; transition: color 150ms var(--ease); }
 .nav-links .btn { min-height: 42px; padding: 0 18px; font-size: 14px; }
@@ -274,7 +289,21 @@ footer { padding: 40px 0 calc(28px + env(safe-area-inset-bottom, 0px)); border-t
 
 <header class="site-header">
   <div class="wrap nav">
-    <a class="brand" href="#top" aria-label="Kitsap Cans, back to top">kitsap cans<i>.</i></a>
+    <a class="brand" href="#top" aria-label="Kitsap Cans, back to top">
+      <svg class="mark" viewBox="210 90 560 850" aria-hidden="true" focusable="false">
+        <defs><linearGradient id="markDrop" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8AF0E2"/><stop offset="1" stop-color="#2FB3A6"/></linearGradient></defs>
+        <path d="M512 100 C430 212 220 468 220 632 A292 292 0 0 0 804 632 C804 468 594 212 512 100Z" fill="#1E8279"/>
+        <path d="M512 100 C430 212 220 468 220 632 C220 800 352 926 512 924 C664 922 768 800 766 646 C764 500 610 250 512 100Z" fill="url(#markDrop)"/>
+        <path d="M427 358 C380 410 340 480 332 548" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="30" stroke-linecap="round"/>
+        <rect x="458" y="398" width="108" height="34" rx="12" fill="#F1ECE3"/>
+        <rect x="345" y="425" width="334" height="61" rx="22" fill="#F1ECE3"/>
+        <path d="M375 498 H649 L626 762 Q625 772 615 772 H409 Q399 772 398 762Z" fill="#F1ECE3"/>
+        <path d="M459 552 V716 M512 552 V716 M565 552 V716" stroke="#9FD9D0" stroke-width="15" stroke-linecap="round"/>
+        <circle cx="429" cy="778" r="35" fill="#0B0F12"/><circle cx="595" cy="778" r="35" fill="#0B0F12"/>
+        <path class="mark-spark" d="M686 308 C694 350 712 366 750 372 C712 378 694 394 686 436 C678 394 660 378 622 372 C660 366 678 350 686 308Z" fill="#E8893A" stroke="#0B0F12" stroke-width="9" stroke-linejoin="round"/>
+      </svg>
+      <span>kitsap cans<i>.</i></span>
+    </a>
     <nav class="nav-links" aria-label="Main">
       <a href="#how">How it works</a>
       <a href="#pricing">Pricing</a>
