@@ -3,240 +3,294 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Kitsap Cans</title>
-<meta name="description" content="Garbage, recycling and yard-waste can cleaning on Bainbridge Island, WA. Done at the curb on pickup day. Clean cans, year-round.">
+<title>Kitsap Cans · Can cleaning on Bainbridge Island</title>
+<meta name="description" content="Kitsap Cans washes garbage, recycling and yard-waste cans at the curb on Bainbridge Island, right after pickup. Monthly plans from $20 a can.">
+<meta name="theme-color" content="#17364A">
+<meta property="og:title" content="Kitsap Cans · Clean cans, year-round.">
+<meta property="og:description" content="Garbage, recycling and yard-waste can cleaning at the curb on Bainbridge Island.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20120%20145%22%3E%3Cpath%20d%3D%22M60%206%20C60%206%2014%2062%2014%2092%20a46%2046%200%200%200%2092%200%20C106%2062%2060%206%2060%206Z%22%20fill%3D%22%232C6E91%22/%3E%3Crect%20x%3D%2240%22%20y%3D%2263%22%20width%3D%2240%22%20height%3D%228%22%20rx%3D%223%22%20fill%3D%22%23fff%22/%3E%3Cpath%20d%3D%22M43%2073%20h34%20l-3%2038%20a4%204%200%200%201%20-4%204%20h-20%20a4%204%200%200%201%20-4%20-4z%22%20fill%3D%22%23fff%22/%3E%3Cpath%20d%3D%22M88%2064%20l2.2%205.8%205.8%202.2%20-5.8%202.2%20-2.2%205.8%20-2.2%20-5.8%20-5.8%20-2.2%205.8%20-2.2z%22%20fill%3D%22%23B6DB4C%22/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;700;800&family=Figtree:wght@400;500;600&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;700;800&family=Figtree:wght@400;500;600;700&display=swap">
 <style>
-/* Layout: navy "pickup day" hero over a wavy water line, then light island-blue sections; one brand look in every theme */
+/* Direction: "Puget Sound at 6 am". Deep navy curb-side scenes, crisp white working sections,
+   lime used only for the primary action and sparkle. Rubik lowercase for the brand voice,
+   Figtree for reading. One brand look in every theme. */
 :root {
   --navy: #17364A;
-  --blue: #2C6E91;
   --deep: #1F5674;
+  --blue: #2C6E91;
   --light: #EFF6F9;
   --lime: #B6DB4C;
+  --lime-hi: #C6E66A;
   --paper: #FBFDFE;
+  --white: #FFFFFF;
   --ink: #17364A;
   --muted: #4B6676;
-  --line: #D3E3EB;
-  --white: #FFFFFF;
+  --line: #D6E4EB;
+  --on-navy: rgba(255,255,255,.84);
+  --on-navy-dim: rgba(255,255,255,.64);
   --display: "Rubik", "Trebuchet MS", system-ui, sans-serif;
   --body: "Figtree", "Segoe UI", system-ui, -apple-system, sans-serif;
-  --gutter: clamp(16px, 4vw, 40px);
-  --wrap: 1120px;
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --gutter: clamp(16px, 4.5vw, 44px);
+  --wrap: 1140px;
+  --r-sm: 10px; --r-md: 16px; --r-lg: 24px;
   color-scheme: light;
 }
 * { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; animation: none !important; } }
+html { -webkit-tap-highlight-color: transparent; -webkit-text-size-adjust: 100%; scroll-behavior: smooth; scroll-padding-top: 84px; }
 body { margin: 0; background: var(--paper); color: var(--ink); font: 400 17px/1.6 var(--body); }
 img, svg { max-width: 100%; }
 a { color: var(--blue); }
-h1, h2, h3 { font-family: var(--display); line-height: 1.1; text-wrap: balance; margin: 0; }
-h2 { font-size: clamp(30px, 4.4vw, 44px); font-weight: 700; letter-spacing: -0.01em; text-transform: lowercase; }
+h1, h2, h3 { font-family: var(--display); line-height: 1.08; margin: 0; text-wrap: balance; }
+h2 { font-size: clamp(32px, 5vw, 52px); font-weight: 700; letter-spacing: -0.02em; text-transform: lowercase; }
 h3 { font-size: 20px; font-weight: 700; }
 p { margin: 0; }
-:focus-visible { outline: 3px solid var(--lime); outline-offset: 2px; border-radius: 4px; }
-
+:focus-visible { outline: 3px solid var(--lime); outline-offset: 3px; border-radius: 6px; }
+button, a, [role="button"], input[type="range"] { touch-action: manipulation; }
+button, .btn { -webkit-user-select: none; user-select: none; }
 .wrap { max-width: var(--wrap); margin: 0 auto; padding-inline: var(--gutter); }
 .dot { color: var(--lime); }
-.eyebrow { font: 600 13px/1 var(--body); letter-spacing: 0.12em; text-transform: uppercase; color: var(--blue); }
-.lede { color: var(--muted); max-width: 60ch; font-size: 18px; }
-.section { padding-block: clamp(56px, 9vw, 96px); }
-.section-head { display: grid; gap: 14px; margin-bottom: 40px; }
+.eyebrow { font: 700 13px/1 var(--body); letter-spacing: .14em; text-transform: uppercase; color: var(--blue); }
+.lede { color: var(--muted); font-size: clamp(17px, 1.6vw, 19px); max-width: 58ch; }
+.section { padding-block: clamp(64px, 10vw, 112px); }
+.head { display: grid; gap: 14px; margin-bottom: clamp(32px, 5vw, 48px); }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
-.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font: 600 16px/1 var(--body); padding: 15px 22px; border-radius: 999px; text-decoration: none; border: 2px solid transparent; cursor: pointer; transition: transform .15s ease, background .15s ease; }
-.btn:hover { transform: translateY(-1px); }
+/* Buttons: press feedback on :active for every input, hover only for real pointers */
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 48px; padding: 0 24px; border-radius: 999px; border: 2px solid transparent; font: 700 16px/1 var(--body); text-decoration: none; cursor: pointer; transition: transform 160ms var(--ease-out), background-color 160ms var(--ease-out), border-color 160ms var(--ease-out); }
+.btn:active { transform: scale(0.97); }
 .btn-lime { background: var(--lime); color: var(--navy); }
-.btn-lime:hover { background: #C4E461; }
-.btn-ghost { border-color: rgba(255,255,255,.45); color: var(--white); }
-.btn-ghost:hover { border-color: var(--white); }
-
-/* Draft flags: visible only while the site is unfinished */
-.draft { display: none; gap: 10px; align-items: flex-start; font-size: 14px; line-height: 1.5; color: #3D4A12; background: #F3F9E1; border: 1.5px dashed #9DBF35; border-radius: 10px; padding: 10px 14px; }
-.draft b { font-weight: 600; white-space: nowrap; }
-
-/* Header */
-.site-header { background: var(--navy); color: var(--white); position: sticky; top: env(safe-area-inset-top, 0px); z-index: 10; }
-.nav { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding-block: 14px; }
-.brand { display: flex; align-items: center; gap: 10px; color: var(--white); text-decoration: none; font: 700 22px/1 var(--display); letter-spacing: -0.01em; }
-.brand svg { width: 30px; height: 36px; flex: none; }
-.nav-links { display: flex; align-items: center; gap: 26px; }
-.nav-links a { color: rgba(255,255,255,.82); text-decoration: none; font-weight: 500; font-size: 15px; }
-.nav-links a:hover { color: var(--white); }
-.nav-links .btn { padding: 11px 18px; font-size: 15px; color: var(--navy); }
-@media (max-width: 760px) { .nav-links a:not(.btn) { display: none; } }
-
-/* Hero */
-.hero { background: var(--navy); color: var(--white); position: relative; }
-.hero-grid { display: grid; grid-template-columns: 1.15fr .85fr; gap: 40px; align-items: center; padding-block: clamp(40px, 7vw, 80px) clamp(70px, 9vw, 110px); }
-.hero-grid > * { min-width: 0; }
-.hero h1 { font-size: clamp(44px, 7.4vw, 84px); font-weight: 800; text-transform: lowercase; letter-spacing: -0.025em; }
-.hero .sub { margin-top: 22px; font-size: clamp(18px, 2vw, 21px); color: rgba(255,255,255,.84); max-width: 34ch; }
-.hero .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 30px; }
-.hero .where { margin-top: 26px; font-size: 14px; color: rgba(255,255,255,.66); display: flex; align-items: center; gap: 8px; }
-.hero-art { display: grid; place-items: center; position: relative; }
-.hero-art svg.drop { width: min(340px, 80%); height: auto; filter: drop-shadow(0 24px 40px rgba(0,0,0,.28)); }
-.ticket { position: absolute; bottom: 4%; left: 0; background: var(--white); color: var(--ink); border-radius: 14px; padding: 12px 16px; box-shadow: 0 10px 30px rgba(10,30,45,.3); font-size: 14px; line-height: 1.35; display: grid; gap: 2px; }
-.ticket .t { font: 600 11px/1 var(--body); letter-spacing: .12em; text-transform: uppercase; color: var(--blue); }
-.ticket strong { font-family: var(--display); font-size: 17px; }
-.wave { display: block; width: 100%; height: 48px; position: absolute; bottom: -1px; left: 0; }
-@media (max-width: 820px) {
-  .hero-grid { grid-template-columns: 1fr; }
-  .hero-art { order: -1; }
-  .hero-art svg.drop { width: 170px; }
-  .ticket { display: none; }
+.btn-line { border-color: rgba(255,255,255,.4); color: var(--white); }
+.btn-dark { background: var(--navy); color: var(--white); }
+.btn svg { width: 18px; height: 18px; transition: transform 200ms var(--ease-out); }
+@media (hover: hover) and (pointer: fine) {
+  .btn-lime:hover { background: var(--lime-hi); }
+  .btn-line:hover { border-color: var(--white); }
+  .btn-dark:hover { background: var(--deep); }
+  .btn:hover svg { transform: translateX(3px); }
+  .nav-links a:not(.btn):hover { color: var(--white); }
 }
 
-/* Steps */
-.steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 28px; list-style: none; margin: 0; padding: 0; counter-reset: s; }
-.steps li { display: grid; gap: 10px; align-content: start; counter-increment: s; }
-.steps li::before { content: counter(s); display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--light); color: var(--blue); font: 700 18px/1 var(--display); border: 2px solid var(--line); }
-.steps p { color: var(--muted); font-size: 16px; }
-@media (max-width: 900px) { .steps { grid-template-columns: repeat(2, 1fr); } }
-@media (max-width: 520px) { .steps { grid-template-columns: 1fr; } }
+/* Header */
+.site-header { position: sticky; top: 0; z-index: 20; background: var(--navy); padding-top: env(safe-area-inset-top, 0px); }
+.nav { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 68px; }
+.brand { display: inline-flex; align-items: center; gap: 10px; color: var(--white); text-decoration: none; font: 700 23px/1 var(--display); letter-spacing: -0.015em; }
+.brand svg { width: 28px; height: 34px; flex: none; }
+.nav-links { display: flex; align-items: center; gap: 28px; }
+.nav-links a:not(.btn) { color: var(--on-navy); text-decoration: none; font-weight: 600; font-size: 15px; transition: color 160ms var(--ease-out); }
+.nav-links .btn { min-height: 44px; padding: 0 18px; font-size: 15px; }
+@media (max-width: 780px) { .nav-links a:not(.btn) { display: none; } }
 
-/* Cans we clean */
-.cans-band { background: var(--light); }
-.can-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-.can-card { background: var(--white); border: 1px solid var(--line); border-radius: 16px; padding: 22px; display: grid; gap: 12px; align-content: start; }
-.can-card .size { display: flex; align-items: baseline; justify-content: space-between; gap: 10px; }
-.can-card .tier { font: 600 12px/1 var(--body); letter-spacing: .1em; text-transform: uppercase; color: var(--blue); }
-.can-card .gal { font: 700 15px/1 var(--display); color: var(--muted); }
-.can-card ul { margin: 0; padding-left: 18px; color: var(--muted); font-size: 15px; }
-.can-card .from { font: 700 28px/1 var(--display); font-variant-numeric: tabular-nums; }
-.can-card .from small { font: 500 14px var(--body); color: var(--muted); }
-@media (max-width: 820px) { .can-grid { grid-template-columns: 1fr; } }
+/* Hero */
+.hero { background: var(--navy); color: var(--white); overflow: hidden; }
+.hero-grid { display: grid; gap: 36px; padding-block: clamp(28px, 6vw, 72px) clamp(48px, 8vw, 96px); }
+.hero-grid > * { min-width: 0; }
+.hero .tag { display: inline-flex; align-items: center; gap: 8px; font: 600 14px/1 var(--body); color: var(--lime); }
+.hero h1 { margin-top: 18px; font-size: clamp(40px, 7vw, 78px); font-weight: 800; letter-spacing: -0.03em; text-transform: lowercase; }
+.hero .sub { margin-top: 20px; font-size: clamp(18px, 2vw, 21px); color: var(--on-navy); max-width: 40ch; }
+.hero .actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 28px; }
+.trust { display: flex; flex-wrap: wrap; gap: 10px 22px; margin: 28px 0 0; padding: 0; list-style: none; font-size: 15px; color: var(--on-navy); }
+.trust li { display: inline-flex; align-items: center; gap: 8px; }
+.trust svg { width: 18px; height: 18px; flex: none; }
+.scene { position: relative; border-radius: var(--r-lg); overflow: hidden; aspect-ratio: 4 / 3; max-width: 100%; background: var(--deep); box-shadow: 0 30px 60px -20px rgba(0,0,0,.45); }
+.scene svg.art { display: block; width: 100%; height: 100%; }
+.ticket { position: absolute; left: 16px; top: 16px; display: grid; gap: 2px; background: var(--white); color: var(--ink); border-radius: 14px; padding: 12px 16px; font-size: 14px; line-height: 1.35; box-shadow: 0 12px 30px rgba(8,24,36,.3); }
+.ticket .t { font: 700 11px/1 var(--body); letter-spacing: .14em; text-transform: uppercase; color: var(--blue); }
+.ticket strong { font: 700 17px/1.2 var(--display); }
+.sparkle { transform-box: fill-box; transform-origin: center; animation: twinkle 3.2s var(--ease-in-out) infinite; }
+.sparkle.s2 { animation-delay: -1.1s; } .sparkle.s3 { animation-delay: -2.2s; }
+.bubble { animation: float 6s var(--ease-in-out) infinite; }
+.bubble.b2 { animation-delay: -2s; } .bubble.b3 { animation-delay: -4s; }
+@keyframes twinkle { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .35; transform: scale(.8); } }
+@keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+.rise { animation: rise 520ms var(--ease-out) both; animation-delay: calc(var(--d, 0) * 70ms); }
+@keyframes rise { from { opacity: 0; transform: translateY(10px); } }
+@media (min-width: 900px) { .hero-grid { grid-template-columns: 1.1fr .9fr; align-items: center; gap: 56px; } }
+
+/* Before / after */
+.ba-grid { display: grid; gap: 40px; align-items: center; }
+.ba-grid > * { min-width: 0; }
+@media (min-width: 900px) { .ba-grid { grid-template-columns: .9fr 1.1fr; gap: 64px; } }
+.ba { position: relative; aspect-ratio: 4 / 3; max-width: 100%; border-radius: var(--r-lg); overflow: hidden; background: var(--light); --pos: 50%; -webkit-user-select: none; user-select: none; }
+.ba svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+.ba .dirty { clip-path: inset(0 calc(100% - var(--pos)) 0 0); }
+.ba .handle { position: absolute; top: 0; bottom: 0; left: var(--pos); width: 3px; margin-left: -1.5px; background: var(--white); box-shadow: 0 0 0 1px rgba(23,54,74,.15); pointer-events: none; }
+.ba .knob { position: absolute; top: 50%; left: 50%; width: 48px; height: 48px; margin: -24px 0 0 -24px; border-radius: 50%; background: var(--white); box-shadow: 0 6px 18px rgba(23,54,74,.3); display: grid; place-items: center; transition: transform 160ms var(--ease-out); }
+.ba .knob svg { position: static; width: 24px; height: 24px; }
+.ba input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: ew-resize; touch-action: pan-y; }
+.ba input:active ~ .handle .knob { transform: scale(1.08); }
+.ba input:focus-visible ~ .handle .knob { outline: 3px solid var(--lime); outline-offset: 3px; }
+.ba .chip { position: absolute; top: 14px; padding: 7px 12px; border-radius: 999px; font: 700 12px/1 var(--body); letter-spacing: .1em; text-transform: uppercase; pointer-events: none; }
+.ba .chip.l { left: 14px; background: rgba(23,54,74,.85); color: var(--white); }
+.ba .chip.r { right: 14px; background: var(--white); color: var(--navy); }
+.ba-note { margin-top: 12px; font-size: 14px; color: var(--muted); }
+.checks { display: grid; gap: 14px; margin: 26px 0 0; padding: 0; list-style: none; }
+.checks li { display: grid; grid-template-columns: 28px 1fr; gap: 12px; align-items: start; }
+.checks svg { width: 28px; height: 28px; }
+.checks b { display: block; font-weight: 700; }
+.checks span { color: var(--muted); font-size: 16px; }
+
+/* Steps: a real sequence, so it's numbered */
+.steps-band { background: var(--light); }
+.steps { display: grid; gap: 16px; margin: 0; padding: 0; list-style: none; counter-reset: s; }
+.steps li { counter-increment: s; display: grid; gap: 10px; align-content: start; background: var(--white); border: 1px solid var(--line); border-radius: var(--r-md); padding: 24px; }
+.steps li::before { content: counter(s); display: grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; background: var(--navy); color: var(--lime); font: 700 18px/1 var(--display); }
+.steps p { color: var(--muted); font-size: 16px; }
+.steps .time { font: 700 13px/1 var(--body); letter-spacing: .08em; text-transform: uppercase; color: var(--blue); }
+@media (min-width: 760px) { .steps { grid-template-columns: repeat(3, 1fr); gap: 20px; } }
 
 /* Pricing */
-.plans { display: inline-flex; background: var(--light); border: 1px solid var(--line); border-radius: 999px; padding: 4px; gap: 4px; flex-wrap: wrap; }
-.plans button { font: 600 15px/1 var(--body); border: 0; background: transparent; color: var(--muted); padding: 11px 18px; border-radius: 999px; cursor: pointer; display: inline-flex; gap: 8px; align-items: center; }
-.plans button[aria-pressed="true"] { background: var(--navy); color: var(--white); }
-.plans .off { font-size: 12px; background: var(--lime); color: var(--navy); padding: 3px 7px; border-radius: 999px; }
-.price-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-top: 28px; align-items: start; }
-.price-layout > * { min-width: 0; }
-.table-box { overflow-x: auto; border: 1px solid var(--line); border-radius: 16px; background: var(--white); }
-table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
-th, td { text-align: left; padding: 14px 18px; border-bottom: 1px solid var(--line); }
-tr:last-child td { border-bottom: 0; }
-th { font: 600 12px/1.2 var(--body); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); background: var(--light); }
-td.num, th.num { text-align: right; }
-td .was { color: var(--muted); text-decoration: line-through; font-size: 14px; margin-right: 6px; }
-td .now { font: 700 19px var(--display); }
-.price-notes { display: grid; gap: 10px; margin-top: 16px; font-size: 15px; color: var(--muted); }
-.price-notes p::before { content: "•"; color: var(--blue); margin-right: 8px; }
-
-/* Quote calculator */
-.calc { background: var(--navy); color: var(--white); border-radius: 20px; padding: 26px; display: grid; gap: 18px; }
-.calc h3 { font-size: 22px; text-transform: lowercase; }
-.calc .hint { font-size: 14px; color: rgba(255,255,255,.7); }
-.can-picks { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
-.cantile { display: grid; grid-template-rows: 1fr auto; gap: 6px; min-width: 0; }
-.can-add { position: relative; display: grid; justify-items: center; align-content: start; gap: 2px; padding: 10px 4px 10px; border-radius: 14px; border: 1.5px solid rgba(255,255,255,.14); background: rgba(255,255,255,.05); color: var(--white); font: inherit; cursor: pointer; transition: border-color .15s ease, background .15s ease, transform .15s ease; }
-.can-add:hover { border-color: rgba(182,219,76,.7); background: rgba(255,255,255,.09); }
-.can-add:active { transform: scale(.97); }
-.can-add svg { width: 100%; max-width: 64px; height: auto; display: block; transition: transform .2s ease; }
-.can-add:hover svg { transform: translateY(-2px); }
-.cantile.on .can-add { border-color: var(--lime); background: rgba(182,219,76,.1); }
-.can-add .badge { position: absolute; top: 6px; right: 6px; min-width: 24px; height: 24px; padding: 0 6px; border-radius: 999px; background: var(--lime); color: var(--navy); font: 700 14px/24px var(--display); font-variant-numeric: tabular-nums; }
-.can-add .cname { font-weight: 600; font-size: 14px; line-height: 1.2; margin-top: 4px; }
-.can-add .cgal { font-size: 12px; color: rgba(255,255,255,.66); line-height: 1.2; }
-.can-add .cprice { font: 700 14px/1.3 var(--display); font-variant-numeric: tabular-nums; color: var(--lime); margin-top: 2px; }
-.can-minus { border: 0; background: transparent; color: rgba(255,255,255,.75); font: 500 13px/1 var(--body); padding: 6px; border-radius: 8px; cursor: pointer; }
-.can-minus:hover { color: var(--white); background: rgba(255,255,255,.08); }
+.price-grid { display: grid; gap: 28px; align-items: start; }
+.price-grid > * { min-width: 0; }
+.price-main { grid-area: main; min-width: 0; } .quote { grid-area: quote; } .table-box { grid-area: table; }
+.price-grid { grid-template-areas: "main" "quote" "table"; }
+@media (min-width: 960px) { .price-grid { grid-template-columns: 1.25fr .75fr; grid-template-areas: "main quote" "table quote"; column-gap: 36px; row-gap: 20px; } }
+.seg { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); background: var(--light); border: 1px solid var(--line); border-radius: 999px; padding: 4px; max-width: 520px; }
+.seg .pill { position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc((100% - 8px) / 3); border-radius: 999px; background: var(--navy); transform: translateX(calc(var(--i, 0) * 100%)); transition: transform 280ms var(--ease-out); }
+.seg button { position: relative; z-index: 1; min-height: 46px; border: 0; background: transparent; border-radius: 999px; color: var(--muted); font: 700 15px/1.1 var(--body); cursor: pointer; display: grid; place-items: center; gap: 2px; padding: 6px 4px; transition: color 200ms var(--ease-out); }
+.seg button small { font-weight: 600; font-size: 12px; color: var(--blue); transition: color 200ms var(--ease-out); }
+.seg button[aria-pressed="true"] { color: var(--white); }
+.seg button[aria-pressed="true"] small { color: var(--lime); }
+.builder { margin-top: 20px; background: var(--white); border: 1px solid var(--line); border-radius: var(--r-lg); padding: clamp(18px, 3vw, 28px); display: grid; gap: 18px; }
+.builder h3 { text-transform: lowercase; font-size: 22px; }
+.builder .hint { color: var(--muted); font-size: 15px; margin-top: 4px; }
+.cans { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; align-items: end; }
+@media (max-width: 600px) { .cans { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.cantile { display: grid; gap: 6px; min-width: 0; }
+.can-add { position: relative; display: grid; justify-items: center; align-content: end; gap: 2px; min-height: 100%; padding: 12px 4px; border-radius: var(--r-md); border: 1.5px solid var(--line); background: var(--paper); color: var(--ink); font: inherit; cursor: pointer; transition: transform 160ms var(--ease-out), border-color 160ms var(--ease-out), background-color 160ms var(--ease-out); }
+.can-add:active { transform: scale(0.97); }
+.can-add svg { width: 100%; max-width: 62px; height: auto; aspect-ratio: 64 / 104; display: block; transition: transform 220ms var(--ease-out); }
+.cantile.on .can-add { border-color: var(--blue); background: var(--light); }
+.can-add .badge { position: absolute; top: 8px; right: 8px; min-width: 26px; height: 26px; padding: 0 7px; border-radius: 999px; background: var(--navy); color: var(--lime); font: 700 14px/26px var(--display); font-variant-numeric: tabular-nums; }
+.can-add .cname { margin-top: 6px; font-weight: 700; font-size: 14px; line-height: 1.2; }
+.can-add .cgal { font-size: 12px; color: var(--muted); line-height: 1.2; }
+.can-add .cprice { margin-top: 3px; font: 700 15px/1.2 var(--display); font-variant-numeric: tabular-nums; color: var(--blue); }
+.can-minus { min-height: 36px; border: 0; background: transparent; color: var(--muted); font: 600 13px/1 var(--body); border-radius: 8px; cursor: pointer; transition: transform 160ms var(--ease-out); }
+.can-minus:active { transform: scale(0.97); }
 .can-minus[disabled] { visibility: hidden; }
-@media (max-width: 560px) { .can-picks { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-.total { border-top: 1px solid rgba(255,255,255,.18); padding-top: 16px; display: grid; gap: 6px; }
-.total .row { display: flex; justify-content: space-between; gap: 12px; font-variant-numeric: tabular-nums; font-size: 15px; color: rgba(255,255,255,.8); }
-.total .big { font: 800 40px/1 var(--display); color: var(--white); }
-.total .big small { font: 500 15px var(--body); color: rgba(255,255,255,.7); }
-.calc .draft { background: rgba(182,219,76,.12); border-color: var(--lime); color: #E6F3C2; }
-@media (max-width: 900px) { .price-layout { grid-template-columns: 1fr; } }
+@media (hover: hover) and (pointer: fine) {
+  .can-add:hover { border-color: var(--blue); }
+  .can-add:hover svg { transform: translateY(-3px); }
+  .can-minus:hover { color: var(--ink); background: var(--light); }
+}
+.multi { display: flex; flex-wrap: wrap; gap: 8px; font-size: 14px; color: var(--muted); }
+.multi span { background: var(--light); border-radius: 999px; padding: 6px 12px; }
+.multi b { color: var(--ink); }
+
+.quote { align-self: start; position: sticky; top: 92px; background: var(--navy); color: var(--white); border-radius: var(--r-lg); padding: clamp(22px, 3vw, 30px); display: grid; gap: 16px; }
+.quote .label { font: 700 12px/1 var(--body); letter-spacing: .14em; text-transform: uppercase; color: var(--lime); }
+.quote .big { font: 800 clamp(48px, 6vw, 60px)/1 var(--display); letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
+.quote .big small { font: 500 16px var(--body); color: var(--on-navy-dim); letter-spacing: 0; }
+.quote .rows { display: grid; gap: 8px; border-top: 1px solid rgba(255,255,255,.14); padding-top: 14px; font-size: 15px; color: var(--on-navy); font-variant-numeric: tabular-nums; }
+.quote .rows div { display: flex; justify-content: space-between; gap: 12px; }
+.quote .save { color: var(--lime); font-weight: 700; }
+.quote .fine { font-size: 13px; color: var(--on-navy-dim); }
+.table-box { overflow-x: auto; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--white); }
+table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; font-size: 15px; }
+th, td { padding: 12px clamp(8px, 2vw, 16px); text-align: right; border-bottom: 1px solid var(--line); white-space: nowrap; }
+th:first-child, td:first-child { text-align: left; }
+tr:last-child td { border-bottom: 0; }
+thead th { font: 700 12px/1.2 var(--body); letter-spacing: .1em; text-transform: uppercase; color: var(--muted); background: var(--light); }
+td.on, th.on { background: rgba(182,219,76,.18); font-weight: 700; color: var(--ink); }
+td small { display: block; color: var(--muted); font-size: 13px; font-weight: 400; }
 
 /* Why */
-.why { display: grid; grid-template-columns: repeat(3, 1fr); gap: 32px; }
-.why > div { display: grid; gap: 10px; align-content: start; }
-.why svg { width: 40px; height: 40px; }
-.why p { color: var(--muted); font-size: 16px; }
-@media (max-width: 820px) { .why { grid-template-columns: 1fr; } }
+.why { display: grid; gap: 28px; }
+.why > * { min-width: 0; }
+@media (min-width: 900px) { .why { grid-template-columns: 1.15fr .85fr; gap: 48px; align-items: stretch; } }
+.why-feature { background: var(--navy); color: var(--white); border-radius: var(--r-lg); padding: clamp(26px, 4vw, 44px); display: grid; gap: 16px; align-content: start; position: relative; overflow: hidden; }
+.why-feature h3 { font-size: clamp(26px, 3.4vw, 36px); text-transform: lowercase; letter-spacing: -0.015em; }
+.why-feature p { color: var(--on-navy); max-width: 46ch; }
+.why-feature .flow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin-top: 8px; font-size: 14px; font-weight: 600; }
+.why-feature .flow span { background: rgba(255,255,255,.1); border-radius: 999px; padding: 7px 12px; }
+.why-feature .flow i { color: var(--lime); font-style: normal; }
+.why-list { display: grid; gap: 0; margin: 0; padding: 0; list-style: none; }
+.why-list li { display: grid; gap: 6px; padding-block: 22px; border-bottom: 1px solid var(--line); }
+.why-list li:first-child { padding-top: 0; }
+.why-list li:last-child { border-bottom: 0; }
+.why-list p { color: var(--muted); font-size: 16px; }
 
 /* FAQ */
 .faq-band { background: var(--light); }
-.faq { display: grid; gap: 10px; max-width: 780px; }
-details { background: var(--white); border: 1px solid var(--line); border-radius: 14px; padding: 4px 20px; }
-summary { cursor: pointer; font: 600 17px/1.4 var(--body); padding-block: 14px; list-style: none; display: flex; justify-content: space-between; gap: 16px; }
+.faq-grid { display: grid; gap: 28px; }
+@media (min-width: 900px) { .faq-grid { grid-template-columns: .7fr 1.3fr; gap: 56px; align-items: start; } }
+.faq-grid .head { align-content: start; }
+.faq { display: grid; gap: 10px; min-width: 0; }
+details { background: var(--white); border: 1px solid var(--line); border-radius: var(--r-md); }
+summary { display: flex; justify-content: space-between; align-items: center; gap: 16px; min-height: 56px; padding: 14px 20px; cursor: pointer; list-style: none; font: 700 17px/1.35 var(--body); -webkit-user-select: none; user-select: none; }
 summary::-webkit-details-marker { display: none; }
-summary::after { content: "+"; font: 700 22px/1 var(--display); color: var(--blue); }
-details[open] summary::after { content: "–"; }
-details p { color: var(--muted); padding-bottom: 16px; font-size: 16px; }
+summary .pm { flex: none; width: 28px; height: 28px; border-radius: 50%; background: var(--light); display: grid; place-items: center; transition: transform 240ms var(--ease-out), background-color 200ms var(--ease-out); }
+summary .pm svg { width: 14px; height: 14px; }
+details[open] summary .pm { transform: rotate(45deg); background: var(--lime); }
+details p { padding: 0 20px 18px; color: var(--muted); font-size: 16px; max-width: 62ch; }
 
-/* Sign-up form */
-.signup-grid { display: grid; grid-template-columns: .8fr 1.2fr; gap: 48px; align-items: start; }
-.signup-grid > * { min-width: 0; }
-form { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; background: var(--white); border: 1px solid var(--line); border-radius: 20px; padding: 26px; box-shadow: 0 14px 40px rgba(23,54,74,.07); }
-.field { display: grid; gap: 6px; min-width: 0; }
-.field.full { grid-column: 1 / -1; }
-label, legend { font: 600 14px/1.2 var(--body); color: var(--ink); }
-input, select, textarea { font: 400 16px/1.4 var(--body); color: var(--ink); background: var(--paper); border: 1.5px solid var(--line); border-radius: 10px; padding: 12px 13px; width: 100%; }
-input:focus, select:focus, textarea:focus { outline: none; border-color: var(--blue); box-shadow: 0 0 0 3px rgba(44,110,145,.18); }
-fieldset { border: 0; padding: 0; margin: 0; display: grid; gap: 8px; }
-.checks { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
-.checks label { display: flex; align-items: center; gap: 8px; font-weight: 400; font-size: 15px; background: var(--paper); border: 1.5px solid var(--line); border-radius: 10px; padding: 10px 12px; cursor: pointer; }
-.checks input { width: auto; accent-color: var(--blue); }
-form .btn { grid-column: 1 / -1; justify-self: start; }
-.form-ok { grid-column: 1 / -1; background: var(--light); border-radius: 12px; padding: 14px 16px; font-size: 15px; }
-@media (max-width: 860px) { .signup-grid { grid-template-columns: 1fr; gap: 28px; } }
-@media (max-width: 520px) { form { grid-template-columns: 1fr; padding: 20px; } .checks { grid-template-columns: 1fr; } }
+/* Closing CTA */
+.closer { background: var(--navy); color: var(--white); }
+.closer-grid { display: grid; gap: 28px; align-items: center; padding-block: clamp(56px, 9vw, 96px); }
+@media (min-width: 860px) { .closer-grid { grid-template-columns: 1.2fr .8fr; } }
+.closer h2 { color: var(--white); }
+.closer p { color: var(--on-navy); margin-top: 14px; max-width: 48ch; }
+.soon { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14); border-radius: var(--r-lg); padding: 24px; display: grid; gap: 10px; }
+.soon b { font: 700 18px/1.3 var(--display); }
+.soon span { color: var(--on-navy); font-size: 15px; }
+.soon .btn { justify-self: start; margin-top: 6px; }
 
-.soon { background: var(--white); border: 1px solid var(--line); border-radius: 20px; padding: 28px; display: grid; gap: 10px; box-shadow: 0 14px 40px rgba(23,54,74,.07); }
-.soon p { color: var(--muted); }
-
-/* Footer */
-footer { background: var(--navy); color: rgba(255,255,255,.75); font-size: 15px; }
-.foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 24px; padding-block: 40px; }
-.foot .brand { font-size: 26px; }
+footer { background: #102A3A; color: var(--on-navy-dim); font-size: 15px; padding-bottom: env(safe-area-inset-bottom, 0px); }
+.foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 24px; padding-block: 36px; }
+.foot .brand { font-size: 24px; }
 .foot .tag { margin-top: 8px; }
 .foot .cols { display: flex; flex-wrap: wrap; gap: 40px; }
 .foot .cols div { display: grid; gap: 4px; align-content: start; }
-.foot .cols b { color: var(--white); font-weight: 600; }
-.foot .fine { border-top: 1px solid rgba(255,255,255,.12); padding-block: 18px; font-size: 13px; color: rgba(255,255,255,.55); }
+.foot .cols b { color: var(--white); font-weight: 700; }
+.fine-print { border-top: 1px solid rgba(255,255,255,.1); padding-block: 18px; font-size: 13px; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .rise { animation: fade 300ms ease-out both; }
+  .sparkle, .bubble { animation: none; }
+  .seg .pill, .btn, .can-add, .can-add svg, summary .pm, .ba .knob { transition-property: opacity, background-color, border-color, color; }
+  .btn:active, .can-add:active, .can-minus:active { transform: none; }
+  @keyframes fade { from { opacity: 0; } }
+}
 </style>
 </head>
 <body>
 
-<!-- Droplet logo, reused by id -->
-<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <defs>
     <clipPath id="dropClip"><path d="M60 6 C60 6 14 62 14 92 a46 46 0 0 0 92 0 C106 62 60 6 60 6Z"/></clipPath>
     <symbol id="droplet" viewBox="0 0 120 145">
       <path d="M60 6 C60 6 14 62 14 92 a46 46 0 0 0 92 0 C106 62 60 6 60 6Z" fill="#2C6E91"/>
-      <g clip-path="url(#dropClip)">
-        <path d="M0 98 C14 91 26 91 40 97 S66 104 80 97 S106 90 120 96 L120 145 L0 145Z" fill="#1F5674"/>
-      </g>
+      <g clip-path="url(#dropClip)"><path d="M0 98 C14 91 26 91 40 97 S66 104 80 97 S106 90 120 96 L120 145 L0 145Z" fill="#1F5674"/></g>
       <path d="M33 70 C36 56 44 44 50 36" stroke="#FFFFFF" stroke-opacity=".45" stroke-width="5" stroke-linecap="round" fill="none"/>
-      <!-- can -->
       <path d="M54 58 h12 a3 3 0 0 1 3 3 v2 h-18 v-2 a3 3 0 0 1 3 -3z" fill="#FFFFFF"/>
       <rect x="40" y="63" width="40" height="8" rx="3" fill="#FFFFFF"/>
       <path d="M43 73 h34 l-3 38 a4 4 0 0 1 -4 4 h-20 a4 4 0 0 1 -4 -4z" fill="#FFFFFF"/>
       <path d="M53 79 v29 M60 79 v29 M67 79 v29" stroke="#C9DCE6" stroke-width="2.4" stroke-linecap="round"/>
-      <circle cx="49" cy="117" r="5.5" fill="#FFFFFF" stroke="#1F5674" stroke-width="2"/>
-      <circle cx="49" cy="117" r="1.8" fill="#1F5674"/>
-      <circle cx="71" cy="117" r="5.5" fill="#FFFFFF" stroke="#1F5674" stroke-width="2"/>
-      <circle cx="71" cy="117" r="1.8" fill="#1F5674"/>
-      <!-- sparkles and bubbles -->
+      <circle cx="49" cy="117" r="5.5" fill="#FFFFFF" stroke="#1F5674" stroke-width="2"/><circle cx="49" cy="117" r="1.8" fill="#1F5674"/>
+      <circle cx="71" cy="117" r="5.5" fill="#FFFFFF" stroke="#1F5674" stroke-width="2"/><circle cx="71" cy="117" r="1.8" fill="#1F5674"/>
       <path d="M88 64 l2.2 5.8 5.8 2.2 -5.8 2.2 -2.2 5.8 -2.2 -5.8 -5.8 -2.2 5.8 -2.2z" fill="#B6DB4C"/>
       <path d="M30 88 l1.5 3.8 3.8 1.5 -3.8 1.5 -1.5 3.8 -1.5 -3.8 -3.8 -1.5 3.8 -1.5z" fill="#B6DB4C"/>
       <circle cx="90" cy="104" r="3" fill="none" stroke="#FFFFFF" stroke-opacity=".7" stroke-width="1.6"/>
       <circle cx="31" cy="112" r="2.2" fill="none" stroke="#FFFFFF" stroke-opacity=".7" stroke-width="1.4"/>
-      <circle cx="84" cy="121" r="1.7" fill="#FFFFFF" fill-opacity=".7"/>
     </symbol>
+    <symbol id="spark" viewBox="0 0 20 20"><path d="M10 0 l2.6 7.4 7.4 2.6 -7.4 2.6 -2.6 7.4 -2.6 -7.4 -7.4 -2.6 7.4 -2.6z" fill="#B6DB4C"/></symbol>
+    <symbol id="tick" viewBox="0 0 24 24"><circle cx="12" cy="12" r="11" fill="#B6DB4C"/><path d="M7 12.5 l3.2 3.2 L17 9" fill="none" stroke="#17364A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="arrow" viewBox="0 0 24 24"><path d="M5 12 h13 M13 6 l6 6 -6 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="can-g-small" viewBox="0 0 64 104"><ellipse cx="32" cy="101" rx="25" ry="2.5" fill="#000000" fill-opacity=".22"/><rect x="13" y="42" width="38" height="5" rx="2.5" fill="#2E3940"/><path d="M11 55 H53 L49.5 92 Q49 95 46 95 H18 Q15 95 14.5 92 Z" fill="#46545D"/><path d="M22 60 V89 M32 60 V90 M42 60 V89" stroke="#5B6B75" stroke-width="2.2" stroke-linecap="round"/><path d="M16 59 L18 88" stroke="#FFFFFF" stroke-opacity=".22" stroke-width="2.4" stroke-linecap="round"/><circle cx="32" cy="70.5" r="7.5" fill="#FFFFFF" fill-opacity=".92"/><path d="M28 68.5 h8 M29 68.5 l.8 7 h4.4 l.8 -7 M30.5 66.5 h3" fill="none" stroke="#46545D" stroke-width="1.6" stroke-linecap="round"/><rect x="8" y="46" width="48" height="7" rx="2.5" fill="#2E3940"/><rect x="7" y="51.5" width="50" height="3.5" rx="1.75" fill="#2E3940"/><rect x="22" y="47.8" width="20" height="2" rx="1" fill="#FFFFFF" fill-opacity=".18"/><circle cx="15" cy="95" r="5.5" fill="#1C2429"/><circle cx="15" cy="95" r="2" fill="#A9B7BF"/><circle cx="49" cy="95" r="5.5" fill="#1C2429"/><circle cx="49" cy="95" r="2" fill="#A9B7BF"/></symbol>
+    <symbol id="can-g-medium" viewBox="0 0 64 104"><ellipse cx="32" cy="101" rx="25" ry="2.5" fill="#000000" fill-opacity=".22"/><rect x="13" y="24" width="38" height="5" rx="2.5" fill="#2E3940"/><path d="M11 37 H53 L49.5 92 Q49 95 46 95 H18 Q15 95 14.5 92 Z" fill="#46545D"/><path d="M22 42 V89 M32 42 V90 M42 42 V89" stroke="#5B6B75" stroke-width="2.2" stroke-linecap="round"/><path d="M16 41 L18 88" stroke="#FFFFFF" stroke-opacity=".22" stroke-width="2.4" stroke-linecap="round"/><circle cx="32" cy="60.1" r="7.5" fill="#FFFFFF" fill-opacity=".92"/><path d="M28 58.1 h8 M29 58.1 l.8 7 h4.4 l.8 -7 M30.5 56.1 h3" fill="none" stroke="#46545D" stroke-width="1.6" stroke-linecap="round"/><rect x="8" y="28" width="48" height="7" rx="2.5" fill="#2E3940"/><rect x="7" y="33.5" width="50" height="3.5" rx="1.75" fill="#2E3940"/><rect x="22" y="29.8" width="20" height="2" rx="1" fill="#FFFFFF" fill-opacity=".18"/><circle cx="15" cy="95" r="5.5" fill="#1C2429"/><circle cx="15" cy="95" r="2" fill="#A9B7BF"/><circle cx="49" cy="95" r="5.5" fill="#1C2429"/><circle cx="49" cy="95" r="2" fill="#A9B7BF"/></symbol>
+    <symbol id="can-r-large" viewBox="0 0 64 104"><ellipse cx="32" cy="101" rx="25" ry="2.5" fill="#000000" fill-opacity=".22"/><rect x="13" y="8" width="38" height="5" rx="2.5" fill="#215F8A"/><path d="M11 21 H53 L49.5 92 Q49 95 46 95 H18 Q15 95 14.5 92 Z" fill="#2F7FB5"/><path d="M22 26 V89 M32 26 V90 M42 26 V89" stroke="#4C95C6" stroke-width="2.2" stroke-linecap="round"/><path d="M16 25 L18 88" stroke="#FFFFFF" stroke-opacity=".22" stroke-width="2.4" stroke-linecap="round"/><circle cx="32" cy="50.8" r="7.5" fill="#FFFFFF" fill-opacity=".92"/><path d="M32 46.3 l4.5 7.5 h-9z" fill="none" stroke="#2F7FB5" stroke-width="1.8" stroke-linejoin="round"/><rect x="8" y="12" width="48" height="7" rx="2.5" fill="#215F8A"/><rect x="7" y="17.5" width="50" height="3.5" rx="1.75" fill="#215F8A"/><rect x="22" y="13.8" width="20" height="2" rx="1" fill="#FFFFFF" fill-opacity=".18"/><circle cx="15" cy="95" r="5.5" fill="#1C2429"/><circle cx="15" cy="95" r="2" fill="#A9B7BF"/><circle cx="49" cy="95" r="5.5" fill="#1C2429"/><circle cx="49" cy="95" r="2" fill="#A9B7BF"/></symbol>
+    <symbol id="can-y-small" viewBox="0 0 64 104"><ellipse cx="32" cy="101" rx="25" ry="2.5" fill="#000000" fill-opacity=".22"/><rect x="13" y="42" width="38" height="5" rx="2.5" fill="#456E29"/><path d="M11 55 H53 L49.5 92 Q49 95 46 95 H18 Q15 95 14.5 92 Z" fill="#5E8F3A"/><path d="M22 60 V89 M32 60 V90 M42 60 V89" stroke="#76A652" stroke-width="2.2" stroke-linecap="round"/><path d="M16 59 L18 88" stroke="#FFFFFF" stroke-opacity=".22" stroke-width="2.4" stroke-linecap="round"/><circle cx="32" cy="70.5" r="7.5" fill="#FFFFFF" fill-opacity=".92"/><path d="M27.5 74.5 C27 67.5 32 64.5 37 65.5 C37 71.5 33 74.5 27.5 74.5Z" fill="#5E8F3A"/><path d="M27.5 74.5 L33 69.5" stroke="#FFFFFF" stroke-width="1"/><rect x="8" y="46" width="48" height="7" rx="2.5" fill="#456E29"/><rect x="7" y="51.5" width="50" height="3.5" rx="1.75" fill="#456E29"/><rect x="22" y="47.8" width="20" height="2" rx="1" fill="#FFFFFF" fill-opacity=".18"/><circle cx="15" cy="95" r="5.5" fill="#1C2429"/><circle cx="15" cy="95" r="2" fill="#A9B7BF"/><circle cx="49" cy="95" r="5.5" fill="#1C2429"/><circle cx="49" cy="95" r="2" fill="#A9B7BF"/></symbol>
+    <symbol id="can-y-large" viewBox="0 0 64 104"><ellipse cx="32" cy="101" rx="25" ry="2.5" fill="#000000" fill-opacity=".22"/><rect x="13" y="8" width="38" height="5" rx="2.5" fill="#456E29"/><path d="M11 21 H53 L49.5 92 Q49 95 46 95 H18 Q15 95 14.5 92 Z" fill="#5E8F3A"/><path d="M22 26 V89 M32 26 V90 M42 26 V89" stroke="#76A652" stroke-width="2.2" stroke-linecap="round"/><path d="M16 25 L18 88" stroke="#FFFFFF" stroke-opacity=".22" stroke-width="2.4" stroke-linecap="round"/><circle cx="32" cy="50.8" r="7.5" fill="#FFFFFF" fill-opacity=".92"/><path d="M27.5 54.8 C27 47.8 32 44.8 37 45.8 C37 51.8 33 54.8 27.5 54.8Z" fill="#5E8F3A"/><path d="M27.5 54.8 L33 49.8" stroke="#FFFFFF" stroke-width="1"/><rect x="8" y="12" width="48" height="7" rx="2.5" fill="#456E29"/><rect x="7" y="17.5" width="50" height="3.5" rx="1.75" fill="#456E29"/><rect x="22" y="13.8" width="20" height="2" rx="1" fill="#FFFFFF" fill-opacity=".18"/><circle cx="15" cy="95" r="5.5" fill="#1C2429"/><circle cx="15" cy="95" r="2" fill="#A9B7BF"/><circle cx="49" cy="95" r="5.5" fill="#1C2429"/><circle cx="49" cy="95" r="2" fill="#A9B7BF"/></symbol>
   </defs>
 </svg>
 
 <header class="site-header">
   <div class="wrap nav">
-    <a class="brand" href="#top" aria-label="kitsap cans home">
+    <a class="brand" href="#top" aria-label="Kitsap Cans, back to top">
       <svg aria-hidden="true"><use href="#droplet"/></svg>
       <span>kitsap cans<span class="dot">.</span></span>
     </a>
@@ -244,173 +298,224 @@ footer { background: var(--navy); color: rgba(255,255,255,.75); font-size: 15px;
       <a href="#how">How it works</a>
       <a href="#pricing">Pricing</a>
       <a href="#faq">FAQ</a>
-      <a class="btn btn-lime" href="#signup">Get started</a>
+      <a class="btn btn-lime" href="#pricing">See my price</a>
     </nav>
   </div>
 </header>
 
 <main id="top">
-  <section class="hero">
+  <section class="hero" aria-labelledby="hero-title">
     <div class="wrap hero-grid">
       <div>
-        <h1>clean cans, year&#8209;round<span class="dot">.</span></h1>
-        <p class="sub">We wash your garbage, recycling and yard-waste cans right at the curb on pickup day, after the truck empties them. No stink, no flies, no hosing them out yourself.</p>
-        <div class="actions">
-          <a class="btn btn-lime" href="#pricing">Get a free quote</a>
-          <a class="btn btn-ghost" href="#pricing">See pricing</a>
+        <p class="tag rise"><svg width="14" height="14" aria-hidden="true"><use href="#spark"/></svg>Clean cans, year-round.</p>
+        <h1 id="hero-title" class="rise" style="--d:1">your cans, washed at the curb on pickup day<span class="dot">.</span></h1>
+        <p class="sub rise" style="--d:2">We clean garbage, recycling and yard-waste cans on Bainbridge Island, right after the truck empties them. You don't need to be home.</p>
+        <div class="actions rise" style="--d:3">
+          <a class="btn btn-lime" href="#pricing">See my price <svg aria-hidden="true"><use href="#arrow"/></svg></a>
+          <a class="btn btn-line" href="#how">How it works</a>
         </div>
-        <p class="where">
-          <svg width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2a7 7 0 0 0-7 7c0 5 7 13 7 13s7-8 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6.5a2.5 2.5 0 0 1 0 5z" fill="#B6DB4C"/></svg>
-          Serving Bainbridge Island, WA
-        </p>
+        <ul class="trust rise" style="--d:4">
+          <li><svg aria-hidden="true"><use href="#tick"/></svg>Monthly from $20 a can</li>
+          <li><svg aria-hidden="true"><use href="#tick"/></svg>No need to be home</li>
+          <li><svg aria-hidden="true"><use href="#tick"/></svg>Every drop of wash water captured</li>
+        </ul>
       </div>
-      <div class="hero-art">
-        <svg class="drop" viewBox="0 0 120 145" role="img" aria-label="kitsap cans droplet logo"><use href="#droplet"/></svg>
+
+      <div class="scene rise" style="--d:2">
+        <svg class="art" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" role="img" aria-label="A garbage can, a recycling can and a yard-waste can sparkling clean at the curb at dawn">
+          <defs>
+            <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#17364A"/><stop offset=".62" stop-color="#2C6E91"/><stop offset="1" stop-color="#7FB3CC"/>
+            </linearGradient>
+          </defs>
+          <rect width="400" height="300" fill="url(#sky)"/>
+          <circle cx="318" cy="92" r="26" fill="#F3E9B8" fill-opacity=".9"/>
+          <path d="M0 196 L46 160 L78 178 L122 140 L170 176 L214 150 L262 184 L310 156 L352 176 L400 152 L400 214 L0 214Z" fill="#1F4A3A"/>
+          <path d="M0 206 C70 198 130 212 200 206 S330 198 400 206 L400 222 L0 222Z" fill="#1F5674"/>
+          <rect y="222" width="400" height="18" fill="#9FB3BF"/>
+          <rect y="240" width="400" height="60" fill="#56676F"/>
+          <path d="M0 262 H400" stroke="#6B7C84" stroke-width="2" stroke-dasharray="26 18"/>
+          <use href="#can-g-medium" x="62" y="104" width="86" height="140"/>
+          <use href="#can-r-large" x="152" y="84" width="100" height="162"/>
+          <use href="#can-y-small" x="256" y="122" width="76" height="124"/>
+          <use class="sparkle" href="#spark" x="138" y="122" width="18" height="18"/>
+          <use class="sparkle s2" href="#spark" x="240" y="98" width="14" height="14"/>
+          <use class="sparkle s3" href="#spark" x="322" y="150" width="16" height="16"/>
+          <circle class="bubble" cx="56" cy="150" r="6" fill="none" stroke="#FFFFFF" stroke-opacity=".7" stroke-width="2"/>
+          <circle class="bubble b2" cx="342" cy="118" r="4.5" fill="none" stroke="#FFFFFF" stroke-opacity=".7" stroke-width="1.8"/>
+          <circle class="bubble b3" cx="150" cy="80" r="3.5" fill="#FFFFFF" fill-opacity=".6"/>
+        </svg>
         <div class="ticket" aria-hidden="true">
-          <span class="t">Pickup day</span>
+          <span class="t">Pickup day · 6 am</span>
           <strong>Truck empties it. We clean it.</strong>
-          <span>You don't have to be home.</span>
         </div>
       </div>
     </div>
-    <svg class="wave" viewBox="0 0 1440 48" preserveAspectRatio="none" aria-hidden="true"><path d="M0 22 C180 6 340 6 520 20 S880 40 1060 26 S1320 8 1440 18 L1440 48 L0 48Z" fill="#FBFDFE"/></svg>
   </section>
 
-  <section class="section" id="how">
+  <section class="section" aria-labelledby="ba-title">
+    <div class="wrap ba-grid">
+      <div>
+        <div class="head" style="margin-bottom:0">
+          <span class="eyebrow">What you get</span>
+          <h2 id="ba-title">no more smell when you open the lid<span class="dot">.</span></h2>
+          <p class="lede">Drag the slider to see the difference. Every visit, we wash out what the truck leaves behind, scrub the inside and outside, and deodorize.</p>
+        </div>
+        <ul class="checks">
+          <li><svg aria-hidden="true"><use href="#tick"/></svg><div><b>Inside and out</b><span>Lid, walls, bottom and handle, not just a quick rinse.</span></div></li>
+          <li><svg aria-hidden="true"><use href="#tick"/></svg><div><b>Deodorized</b><span>Cans stay fresh between visits, which keeps flies and raccoons less interested.</span></div></li>
+          <li><svg aria-hidden="true"><use href="#tick"/></svg><div><b>Left where we found them</b><span>Your cans stay at the curb, ready for you to roll back in.</span></div></li>
+        </ul>
+      </div>
+      <div>
+        <div class="ba" id="ba">
+          <svg class="clean" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <defs><radialGradient id="cleanIn" cx=".45" cy=".4" r=".7"><stop offset="0" stop-color="#F4FAFC"/><stop offset="1" stop-color="#B9CFDA"/></radialGradient></defs>
+            <rect width="400" height="300" fill="#EFF6F9"/>
+            <circle cx="200" cy="150" r="122" fill="#2F7FB5"/>
+            <circle cx="200" cy="150" r="106" fill="url(#cleanIn)"/>
+            <path d="M128 112 A84 84 0 0 1 196 70" stroke="#FFFFFF" stroke-width="10" stroke-linecap="round" fill="none" stroke-opacity=".9"/>
+            <circle cx="200" cy="150" r="46" fill="none" stroke="#FFFFFF" stroke-opacity=".5" stroke-width="2"/>
+            <use href="#spark" x="236" y="104" width="26" height="26"/>
+            <use href="#spark" x="148" y="186" width="18" height="18"/>
+            <use href="#spark" x="252" y="196" width="14" height="14"/>
+            <circle cx="182" cy="128" r="5" fill="none" stroke="#2C6E91" stroke-opacity=".4" stroke-width="1.6"/>
+            <circle cx="226" cy="168" r="3.5" fill="none" stroke="#2C6E91" stroke-opacity=".4" stroke-width="1.4"/>
+          </svg>
+          <svg class="dirty" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+            <defs><radialGradient id="dirtyIn" cx=".5" cy=".5" r=".7"><stop offset="0" stop-color="#5C5A3E"/><stop offset="1" stop-color="#2F2E22"/></radialGradient></defs>
+            <rect width="400" height="300" fill="#DCE3DE"/>
+            <circle cx="200" cy="150" r="122" fill="#2A6690"/>
+            <path d="M92 116 C100 100 112 98 116 110 C120 124 108 132 98 128Z M282 76 C296 80 304 92 296 98 C286 104 276 92 282 76Z" fill="#4A4430" fill-opacity=".7"/>
+            <circle cx="200" cy="150" r="106" fill="url(#dirtyIn)"/>
+            <ellipse cx="170" cy="130" rx="40" ry="26" fill="#7A6A3A" fill-opacity=".7"/>
+            <ellipse cx="236" cy="176" rx="34" ry="20" fill="#3E5A2E" fill-opacity=".75"/>
+            <ellipse cx="214" cy="112" rx="18" ry="10" fill="#8C7B45" fill-opacity=".6"/>
+            <path d="M120 150 C130 158 128 172 140 176" stroke="#7A6A3A" stroke-width="6" stroke-linecap="round" fill="none" stroke-opacity=".7"/>
+            <circle cx="190" cy="196" r="5" fill="#1E1D15"/><circle cx="252" cy="134" r="4" fill="#1E1D15"/><circle cx="160" cy="176" r="3" fill="#1E1D15"/>
+            <g fill="#1B1B18"><ellipse cx="300" cy="64" rx="4" ry="3"/><ellipse cx="318" cy="88" rx="3.5" ry="2.6"/><ellipse cx="96" cy="70" rx="3.5" ry="2.6"/></g>
+            <g fill="#FFFFFF" fill-opacity=".55"><ellipse cx="297" cy="60" rx="3.4" ry="1.8" transform="rotate(-30 297 60)"/><ellipse cx="303" cy="60" rx="3.4" ry="1.8" transform="rotate(30 303 60)"/><ellipse cx="315" cy="84" rx="3" ry="1.6" transform="rotate(-30 315 84)"/><ellipse cx="321" cy="84" rx="3" ry="1.6" transform="rotate(30 321 84)"/><ellipse cx="93" cy="66" rx="3" ry="1.6" transform="rotate(-30 93 66)"/><ellipse cx="99" cy="66" rx="3" ry="1.6" transform="rotate(30 99 66)"/></g>
+          </svg>
+          <span class="chip l">Before</span><span class="chip r">After</span>
+          <input type="range" id="ba-range" min="0" max="100" value="50" aria-label="Compare a dirty can and a clean can">
+          <div class="handle"><span class="knob"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6 l-6 6 6 6 M15 6 l6 6 -6 6" fill="none" stroke="#17364A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+        </div>
+        <p class="ba-note">Illustration looking down into a 96-gallon recycling can.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="section steps-band" id="how" aria-labelledby="how-title">
     <div class="wrap">
-      <div class="section-head">
+      <div class="head">
         <span class="eyebrow">How it works</span>
-        <h2>you roll them out. we handle the rest<span class="dot">.</span></h2>
+        <h2 id="how-title">nothing changes for you<span class="dot">.</span></h2>
       </div>
       <ol class="steps">
-        <li><h3>Pick a plan</h3><p>Choose monthly, quarterly or a one-time clean, and tell us which cans you have.</p></li>
-        <li><h3>Put cans out as usual</h3><p>Cans go to the curb by 6 am on your normal pickup day. Nothing changes for you.</p></li>
-        <li><h3>We wash after the truck</h3><p>Once Bainbridge Disposal empties them, our crew washes, scrubs and deodorizes each can at the curb.</p></li>
-        <li><h3>Come home to clean cans</h3><p>Your cans are left right where they were, clean and fresh. We come back on your next scheduled visit.</p></li>
+        <li><span class="time">Today</span><h3>Pick your cans and plan</h3><p>Choose monthly, quarterly or a one-time clean, and tell us which cans you have.</p></li>
+        <li><span class="time">Pickup day, by 6 am</span><h3>Roll them out like normal</h3><p>Your cans go to the curb for Bainbridge Disposal, same as every week.</p></li>
+        <li><span class="time">After the truck</span><h3>We wash them right there</h3><p>Our crew cleans and deodorizes each can at the curb and leaves it where it was.</p></li>
       </ol>
     </div>
   </section>
 
-  <section class="section cans-band" id="cans">
+  <section class="section" id="pricing" aria-labelledby="price-title">
     <div class="wrap">
-      <div class="section-head">
-        <span class="eyebrow">What we clean</span>
-        <h2>every can bainbridge disposal hands out<span class="dot">.</span></h2>
-        <p class="lede">Pricing is per can and goes by size. Bigger cans take longer to clean, so they cost a little more.</p>
-      </div>
-      <div class="can-grid">
-        <article class="can-card">
-          <div class="size"><span class="tier">Small</span><span class="gal">20–32 gal</span></div>
-          <ul><li>20 or 32-gal garbage</li><li>32-gal food &amp; yard waste</li></ul>
-          <p class="from">$20<small> /visit on monthly</small></p>
-        </article>
-        <article class="can-card">
-          <div class="size"><span class="tier">Medium</span><span class="gal">64 gal</span></div>
-          <ul><li>64-gal garbage</li></ul>
-          <p class="from">$22.50<small> /visit on monthly</small></p>
-        </article>
-        <article class="can-card">
-          <div class="size"><span class="tier">Large</span><span class="gal">96 gal</span></div>
-          <ul><li>96-gal recycling</li><li>96-gal food &amp; yard waste</li></ul>
-          <p class="from">$25<small> /visit on monthly</small></p>
-        </article>
-      </div>
-    </div>
-  </section>
-
-  <section class="section" id="pricing">
-    <div class="wrap">
-      <div class="section-head">
+      <div class="head">
         <span class="eyebrow">Pricing</span>
-        <h2>simple per-can pricing<span class="dot">.</span></h2>
-        <p class="lede">Subscribe and save: quarterly plans save you up to 22% and monthly plans up to 44% compared with a one-time clean. Adding more cans saves you even more.</p>
+        <h2 id="price-title">tap your cans, see your price<span class="dot">.</span></h2>
+        <p class="lede">Prices are per can, per visit, and go by size. Monthly plans save the most, and every extra can saves you more.</p>
       </div>
 
-      <div class="plans" role="group" aria-label="Choose a plan">
-        <button type="button" id="plan-monthly" data-plan="monthly" aria-pressed="true">Monthly <span class="off">save up to 44%</span></button>
-        <button type="button" id="plan-quarterly" data-plan="quarterly" aria-pressed="false">Quarterly <span class="off">save up to 22%</span></button>
-        <button type="button" id="plan-once" data-plan="once" aria-pressed="false">One-time</button>
-      </div>
-
-      <div class="price-layout">
-        <div>
-          <div class="table-box">
-            <table>
-              <thead><tr><th>Can size</th><th class="num">Per can, per visit</th></tr></thead>
-              <tbody id="price-rows"></tbody>
-            </table>
+      <div class="price-grid">
+        <div class="price-main">
+          <div class="seg" role="group" aria-label="Choose a plan" id="seg">
+            <span class="pill" aria-hidden="true"></span>
+            <button type="button" id="plan-monthly" data-plan="monthly" aria-pressed="true">Monthly<small>save up to 44%</small></button>
+            <button type="button" id="plan-quarterly" data-plan="quarterly" aria-pressed="false">Quarterly<small>save up to 22%</small></button>
+            <button type="button" id="plan-once" data-plan="once" aria-pressed="false">One-time<small>single visit</small></button>
           </div>
-          <div class="price-notes">
-            <p><strong>Multi-can savings:</strong> your 2nd can is 10% off, 3rd can 20% off, and 4th can 25% off. We apply it so your biggest can is always the full-price one.</p>
-            <p>Monthly is 12 cleanings a year, quarterly is 4.</p>
+
+          <div class="builder">
+            <div>
+              <h3>which cans do you have<span class="dot">?</span></h3>
+              <p class="hint">Tap a can to add it. Tap again if you have two of the same.</p>
+            </div>
+            <div class="cans" id="picks"></div>
+            <div class="multi"><span>2nd can <b>10% off</b></span><span>3rd can <b>20% off</b></span><span>4th can <b>25% off</b></span></div>
           </div>
         </div>
 
-        <aside class="calc" aria-labelledby="calc-title">
-          <div>
-            <h3 id="calc-title">build your quote<span class="dot">.</span></h3>
-            <p class="hint">Tap each can you have at your house. Tap again to add another of the same can.</p>
+          <div class="table-box">
+            <table>
+              <caption class="sr">Price per can, per visit</caption>
+              <thead><tr><th scope="col">Can size</th><th scope="col" data-col="monthly">Monthly</th><th scope="col" data-col="quarterly">Quarterly</th><th scope="col" data-col="once">One-time</th></tr></thead>
+              <tbody id="price-rows"></tbody>
+            </table>
           </div>
-          <div class="can-picks" id="picks"></div>
-          <div class="total" aria-live="polite">
-            <div class="row"><span id="t-plan">Monthly plan</span><span id="t-save"></span></div>
-            <div class="big" id="t-visit">$0<small> /visit</small></div>
+
+        <aside class="quote" aria-labelledby="quote-title">
+          <span class="label" id="quote-title">Your price</span>
+          <div class="big" id="t-visit" aria-live="polite">$43<small> per visit</small></div>
+          <div class="rows">
+            <div><span id="t-plan">Monthly plan</span><span id="t-count">2 cans</span></div>
+            <div><span>Compared with one-time</span><span class="save" id="t-save">Save $37</span></div>
           </div>
-          <a class="btn btn-lime" href="#signup">Sign-ups open soon</a>
+          <p class="fine">Your biggest can is always the full-price one. The multi-can discount goes on the rest.</p>
+          <a class="btn btn-lime" href="#signup">I want this plan <svg aria-hidden="true"><use href="#arrow"/></svg></a>
         </aside>
       </div>
     </div>
   </section>
 
-  <section class="section" style="padding-top:0">
+  <section class="section" style="padding-top:0" aria-labelledby="why-title">
     <div class="wrap">
+      <div class="head">
+        <span class="eyebrow">Why Kitsap Cans</span>
+        <h2 id="why-title">done right for the island<span class="dot">.</span></h2>
+      </div>
       <div class="why">
-        <div>
-          <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M20 4 C20 4 8 18 8 25 a12 12 0 0 0 24 0 C32 18 20 4 20 4Z" fill="#2C6E91"/><path d="M14 26 a6 6 0 0 0 6 6" stroke="#FFFFFF" stroke-width="2.4" fill="none" stroke-linecap="round"/></svg>
-          <h3>Every drop captured</h3>
-          <p>Dirty wash water never goes into storm drains, ditches or the Sound. We collect it on our rig and dispose of it properly.</p>
+        <div class="why-feature">
+          <h3>every drop of wash water captured<span class="dot">.</span></h3>
+          <p>Dirty can water carries food waste and bacteria. We never let it run into storm drains, ditches or Puget Sound. It's collected on our rig and taken to an approved disposal site.</p>
+          <div class="flow" aria-label="Where the water goes"><span>Your can</span><i>→</i><span>Our rig's tank</span><i>→</i><span>Approved disposal</span></div>
         </div>
-        <div>
-          <svg viewBox="0 0 40 40" aria-hidden="true"><rect x="5" y="9" width="30" height="26" rx="4" fill="#EFF6F9" stroke="#2C6E91" stroke-width="2.4"/><path d="M5 16 h30 M13 5 v7 M27 5 v7" stroke="#2C6E91" stroke-width="2.4" stroke-linecap="round"/><circle cx="20" cy="25" r="4" fill="#B6DB4C"/></svg>
-          <h3>Same day as pickup</h3>
-          <p>We work around your Bainbridge Disposal pickup day, so your cans are empty and already out. You don't need to be home.</p>
-        </div>
-        <div>
-          <svg viewBox="0 0 40 40" aria-hidden="true"><path d="M6 34 V18 L20 7 L34 18 V34Z" fill="#EFF6F9" stroke="#2C6E91" stroke-width="2.4" stroke-linejoin="round"/><rect x="16" y="23" width="8" height="11" fill="#2C6E91"/><path d="M29 6 l1.4 3.6 3.6 1.4 -3.6 1.4 -1.4 3.6 -1.4 -3.6 -3.6 -1.4 3.6 -1.4z" fill="#B6DB4C"/></svg>
-          <h3>Local to the island</h3>
-          <p>Kitsap Cans is a small Kitsap business focused on Bainbridge Island. We know the roads, the pickup days and the neighborhoods.</p>
-        </div>
+        <ul class="why-list">
+          <li><h3>Built around pickup day</h3><p>Your cans are already empty and at the curb, so a visit takes minutes and you never lift a finger.</p></li>
+          <li><h3>Every can on your list</h3><p>Garbage, recycling and yard waste, including the cans Bainbridge Disposal provides. Signing up gives us your OK to clean them.</p></li>
+          <li><h3>Local to Kitsap</h3><p>We work Bainbridge Island street by street, so we know the routes and the pickup days.</p></li>
+        </ul>
       </div>
     </div>
   </section>
 
-  <section class="section faq-band" id="faq">
-    <div class="wrap">
-      <div class="section-head">
+  <section class="section faq-band" id="faq" aria-labelledby="faq-title">
+    <div class="wrap faq-grid">
+      <div class="head">
         <span class="eyebrow">Questions</span>
-        <h2>good to know<span class="dot">.</span></h2>
+        <h2 id="faq-title">good to know<span class="dot">.</span></h2>
       </div>
       <div class="faq">
-        <details><summary>Do I need to be home?</summary><p>No. Leave your cans at the curb like you normally do on pickup day. We clean them after the truck empties them and leave them where we found them.</p></details>
-        <details><summary>Which day will you come?</summary><p>On your regular garbage pickup day. We plan our routes around Bainbridge Disposal's schedule, so your cans are already empty and out.</p></details>
-        <details><summary>Can you clean my recycling can? Bainbridge Disposal owns it.</summary><p>Yes. Signing up gives us your permission to clean every can you list, including the recycling and yard-waste cans the hauler provides. We use cleaners that are safe for the cans.</p></details>
-        <details><summary>What happens to the dirty water?</summary><p>We catch all of it. Washington rules say mobile washers can't let wash water reach the ground, storm drains or surface water, so we collect it on our rig and take it to an approved disposal site.</p></details>
-        <details><summary>What do you do to each can?</summary><p>We rinse out what the truck left behind, scrub and wash the inside and outside, then deodorize so it stays fresh until next time.</p></details>
-        <details><summary>Why is monthly so much cheaper?</summary><p>Regular visits keep cans from building up grime, and they let us plan efficient routes on each street. We pass those savings on to you, so a monthly clean costs up to 44% less than a one-time clean.</p></details>
+        <details><summary>Do I need to be home?<span class="pm"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1 V13 M1 7 H13" stroke="#17364A" stroke-width="2.2" stroke-linecap="round"/></svg></span></summary><p>No. Leave your cans at the curb like you normally do on pickup day. We clean them after the truck empties them and leave them where we found them.</p></details>
+        <details><summary>Which day will you come?<span class="pm"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1 V13 M1 7 H13" stroke="#17364A" stroke-width="2.2" stroke-linecap="round"/></svg></span></summary><p>On your regular garbage pickup day. We plan our routes around Bainbridge Disposal's schedule, so your cans are already empty and out.</p></details>
+        <details><summary>Can you clean my recycling can? Bainbridge Disposal owns it.<span class="pm"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1 V13 M1 7 H13" stroke="#17364A" stroke-width="2.2" stroke-linecap="round"/></svg></span></summary><p>Yes. Signing up gives us your permission to clean every can you list, including the recycling and yard-waste cans the hauler provides. We use cleaners that are safe for the cans.</p></details>
+        <details><summary>What happens to the dirty water?<span class="pm"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1 V13 M1 7 H13" stroke="#17364A" stroke-width="2.2" stroke-linecap="round"/></svg></span></summary><p>We catch all of it. Washington rules say mobile washers can't let wash water reach the ground, storm drains or surface water, so we collect it on our rig and take it to an approved disposal site.</p></details>
+        <details><summary>Why is monthly so much cheaper?<span class="pm"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1 V13 M1 7 H13" stroke="#17364A" stroke-width="2.2" stroke-linecap="round"/></svg></span></summary><p>Regular visits keep grime from building up, and they let us plan efficient routes on each street. We pass that on to you, so a monthly clean costs up to 44% less than a one-time clean.</p></details>
       </div>
     </div>
   </section>
 
-  <section class="section" id="signup">
-    <div class="wrap signup-grid">
-      <div class="section-head" style="margin:0">
-        <span class="eyebrow">Get started</span>
-        <h2>coming soon to bainbridge<span class="dot">.</span></h2>
-        <p class="lede">Kitsap Cans is launching on Bainbridge Island. Use the quote builder above to see what your cans will cost.</p>
+  <section class="closer" id="signup" aria-labelledby="signup-title">
+    <div class="wrap closer-grid">
+      <div>
+        <span class="eyebrow" style="color:var(--lime)">Get started</span>
+        <h2 id="signup-title" style="margin-top:14px">launching soon on bainbridge<span class="dot">.</span></h2>
+        <p>We're getting our crew and rig ready. Watch for us on your street, and check back here to sign up.</p>
       </div>
       <div class="soon">
-        <h3>Online sign-up opens soon</h3>
-        <p>We're getting our crew and rig ready for Bainbridge Island. Watch for us on your street, and check back here to sign up.</p>
+        <b>Online sign-up opens soon</b>
+        <span>Use the price builder to see what your cans will cost in the meantime.</span>
+        <a class="btn btn-lime" href="#pricing">See my price <svg aria-hidden="true"><use href="#arrow"/></svg></a>
       </div>
     </div>
   </section>
@@ -427,127 +532,103 @@ footer { background: var(--navy); color: rgba(255,255,255,.75); font-size: 15px;
       <div><b>Contact</b><span>Phone and email coming soon</span></div>
     </div>
   </div>
-  <div class="wrap fine">© 2026 Kitsap Cans</div>
+  <div class="wrap fine-print">© 2026 Kitsap Cans</div>
 </footer>
 
 <script>
 (function () {
-  var SIZES = [
-    { id: "small", name: "Small", gal: "20–32 gal", price: { once: 35, quarterly: 27.5, monthly: 20 } },
-    { id: "medium", name: "Medium", gal: "64 gal", price: { once: 40, quarterly: 31.25, monthly: 22.5 } },
-    { id: "large", name: "Large", gal: "96 gal", price: { once: 45, quarterly: 35, monthly: 25 } }
-  ];
-  var PLANS = {
-    monthly: { label: "Monthly plan", visits: 12 },
-    quarterly: { label: "Quarterly plan", visits: 4 },
-    once: { label: "One-time clean", visits: 1 }
+  var SIZES = {
+    small: { name: "Small", gal: "20–32 gal", price: { once: 35, quarterly: 27.5, monthly: 20 } },
+    medium: { name: "Medium", gal: "64 gal", price: { once: 40, quarterly: 31.25, monthly: 22.5 } },
+    large: { name: "Large", gal: "96 gal", price: { once: 45, quarterly: 35, monthly: 25 } }
   };
+  var PLANS = { monthly: "Monthly plan", quarterly: "Quarterly plan", once: "One-time clean" };
+  var ORDER = ["monthly", "quarterly", "once"];
   var MULTI = [0, 0.10, 0.20, 0.25]; // 1st, 2nd, 3rd, 4th+ can
   var PICKS = [
-    { id: "g-small", kind: "garbage", name: "Garbage", gal: "20–32 gal", size: "small", h: 52, n: 1 },
-    { id: "g-medium", kind: "garbage", name: "Garbage", gal: "64 gal", size: "medium", h: 70, n: 0 },
-    { id: "r-large", kind: "recycling", name: "Recycling", gal: "96 gal", size: "large", h: 86, n: 1 },
-    { id: "y-small", kind: "yard", name: "Yard waste", gal: "32 gal", size: "small", h: 52, n: 0 },
-    { id: "y-large", kind: "yard", name: "Yard waste", gal: "96 gal", size: "large", h: 86, n: 0 }
+    { id: "g-small", name: "Garbage", gal: "20–32 gal", size: "small", n: 1 },
+    { id: "g-medium", name: "Garbage", gal: "64 gal", size: "medium", n: 0 },
+    { id: "r-large", name: "Recycling", gal: "96 gal", size: "large", n: 1 },
+    { id: "y-small", name: "Yard waste", gal: "32 gal", size: "small", n: 0 },
+    { id: "y-large", name: "Yard waste", gal: "96 gal", size: "large", n: 0 }
   ];
-  var CAN_COLORS = {
-    garbage: { body: "#46545D", lid: "#2E3940", rib: "#5B6B75" },
-    recycling: { body: "#2F7FB5", lid: "#215F8A", rib: "#4C95C6" },
-    yard: { body: "#5E8F3A", lid: "#456E29", rib: "#76A652" }
-  };
-  // Wheeled can drawn bottom-aligned in a 64x104 box, so bigger cans stand taller
-  function canSVG(kind, h) {
-    var c = CAN_COLORS[kind], t = 98 - h, b8 = t + 9, B = 92, mid = b8 + (B - b8) * 0.42, ico = "";
-    if (kind === "recycling") ico = '<path d="M32 ' + (mid - 4.5) + ' l4.5 7.5 h-9z" fill="none" stroke="' + c.body + '" stroke-width="1.8" stroke-linejoin="round"/>';
-    else if (kind === "yard") ico = '<path d="M27.5 ' + (mid + 4) + ' C27 ' + (mid - 3) + ' 32 ' + (mid - 6) + ' 37 ' + (mid - 5) + ' C37 ' + (mid + 1) + ' 33 ' + (mid + 4) + ' 27.5 ' + (mid + 4) + 'Z M27.5 ' + (mid + 4) + ' L33 ' + (mid - 1) + '" fill="' + c.body + '" stroke="' + c.body + '" stroke-width="1"/>';
-    else ico = '<path d="M28 ' + (mid - 2) + ' h8 M29 ' + (mid - 2) + ' l.8 7 h4.4 l.8 -7 M30.5 ' + (mid - 4) + ' h3" fill="none" stroke="' + c.body + '" stroke-width="1.6" stroke-linecap="round"/>';
-    return '<svg viewBox="0 0 64 104" aria-hidden="true">' +
-      '<ellipse cx="32" cy="101" rx="25" ry="2.5" fill="#000" fill-opacity=".28"/>' +
-      '<rect x="13" y="' + (t - 4) + '" width="38" height="5" rx="2.5" fill="' + c.lid + '"/>' +
-      '<path d="M11 ' + b8 + ' H53 L49.5 ' + B + ' Q49 ' + (B + 3) + ' 46 ' + (B + 3) + ' H18 Q15 ' + (B + 3) + ' 14.5 ' + B + ' Z" fill="' + c.body + '"/>' +
-      '<path d="M22 ' + (b8 + 5) + ' V' + (B - 3) + ' M32 ' + (b8 + 5) + ' V' + (B - 2) + ' M42 ' + (b8 + 5) + ' V' + (B - 3) + '" stroke="' + c.rib + '" stroke-width="2.2" stroke-linecap="round"/>' +
-      '<path d="M16 ' + (b8 + 4) + ' L18 ' + (B - 4) + '" stroke="#FFFFFF" stroke-opacity=".22" stroke-width="2.4" stroke-linecap="round"/>' +
-      '<circle cx="32" cy="' + mid + '" r="7.5" fill="#FFFFFF" fill-opacity=".92"/>' + ico +
-      '<rect x="8" y="' + t + '" width="48" height="7" rx="2.5" fill="' + c.lid + '"/>' +
-      '<rect x="7" y="' + (t + 5.5) + '" width="50" height="3.5" rx="1.75" fill="' + c.lid + '"/>' +
-      '<rect x="22" y="' + (t + 1.8) + '" width="20" height="2" rx="1" fill="#FFFFFF" fill-opacity=".18"/>' +
-      '<circle cx="15" cy="95" r="5.5" fill="#1C2429"/><circle cx="15" cy="95" r="2" fill="#A9B7BF"/>' +
-      '<circle cx="49" cy="95" r="5.5" fill="#1C2429"/><circle cx="49" cy="95" r="2" fill="#A9B7BF"/>' +
-      '</svg>';
-  }
   var plan = "monthly";
+  var still = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var $ = function (id) { return document.getElementById(id); };
   var money = function (v) { var r = Math.round(v * 100) / 100; return "$" + (r % 1 ? r.toFixed(2) : String(r)); };
-  var sizeOf = function (id) { return SIZES.filter(function (s) { return s.id === id; })[0]; };
+  var pop = function (el, from) {
+    if (!el || !el.animate) return;
+    el.animate(still ? [{ opacity: 0.4 }, { opacity: 1 }] : [{ opacity: 0.4, transform: from }, { opacity: 1, transform: "none" }],
+      { duration: 220, easing: "cubic-bezier(0.23, 1, 0.32, 1)" });
+  };
 
   function renderTable() {
-    var p = PLANS[plan];
-    document.getElementById("price-rows").innerHTML = SIZES.map(function (s) {
-      var now = s.price[plan];
-      var was = plan !== "once" ? '<span class="was">' + money(s.price.once) + "</span>" : "";
-      return "<tr><td><strong>" + s.name + "</strong><br><span style=\"color:var(--muted);font-size:14px\">" + s.gal + "</span></td><td class=\"num\">" + was + '<span class="now">' + money(now) + "</span></td></tr>";
+    $("price-rows").innerHTML = ["small", "medium", "large"].map(function (k) {
+      var s = SIZES[k];
+      return "<tr><td>" + s.name + "<small>" + s.gal + "</small></td>" + ORDER.map(function (p) {
+        return '<td class="' + (p === plan ? "on" : "") + '">' + money(s.price[p]) + "</td>";
+      }).join("") + "</tr>";
     }).join("");
+    document.querySelectorAll("thead th[data-col]").forEach(function (th) { th.classList.toggle("on", th.dataset.col === plan); });
   }
 
   function renderPicks() {
-    document.getElementById("picks").innerHTML = PICKS.map(function (k) {
-      var s = sizeOf(k.size), label = k.name + " can, " + k.gal;
+    $("picks").innerHTML = PICKS.map(function (k) {
+      var label = k.name + " can, " + k.gal;
       return '<div class="cantile' + (k.n ? " on" : "") + '">' +
-        '<button type="button" class="can-add" data-id="' + k.id + '" data-d="1" aria-label="Add one ' + label + ' (' + k.n + ' added)">' +
-        canSVG(k.kind, k.h) + (k.n ? '<span class="badge">' + k.n + "</span>" : "") +
-        '<span class="cname">' + k.name + '</span><span class="cgal">' + k.gal + '</span><span class="cprice">' + money(s.price[plan]) + "</span></button>" +
-        '<button type="button" class="can-minus" data-id="' + k.id + '" data-d="-1" aria-label="Remove one ' + label + '"' + (k.n ? "" : " disabled") + ">− Remove</button></div>";
+        '<button type="button" class="can-add" data-id="' + k.id + '" data-d="1" aria-label="Add a ' + label + ', ' + k.n + ' added">' +
+        '<svg viewBox="0 0 64 104" aria-hidden="true"><use href="#can-' + k.id + '"/></svg>' +
+        (k.n ? '<span class="badge">' + k.n + "</span>" : "") +
+        '<span class="cname">' + k.name + '</span><span class="cgal">' + k.gal + '</span>' +
+        '<span class="cprice">' + money(SIZES[k.size].price[plan]) + "</span></button>" +
+        '<button type="button" class="can-minus" data-id="' + k.id + '" data-d="-1" aria-label="Remove a ' + label + '"' + (k.n ? "" : " disabled") + ">Remove</button></div>";
     }).join("");
   }
 
-  function quote() {
-    var p = PLANS[plan], prices = [];
-    PICKS.forEach(function (k) { for (var i = 0; i < k.n; i++) prices.push(sizeOf(k.size).price); });
-    prices.sort(function (a, b) { return b.once - a.once; }); // largest can pays full price
+  function quote(animate) {
+    var cans = [];
+    PICKS.forEach(function (k) { for (var i = 0; i < k.n; i++) cans.push(SIZES[k.size].price); });
+    cans.sort(function (a, b) { return b.once - a.once; }); // largest can pays full price
     var list = 0, visit = 0;
-    prices.forEach(function (base, i) {
-      list += base.once;
-      visit += base[plan] * (1 - MULTI[Math.min(i, MULTI.length - 1)]);
+    cans.forEach(function (c, i) {
+      list += c.once;
+      visit += c[plan] * (1 - MULTI[Math.min(i, MULTI.length - 1)]);
     });
-    document.getElementById("t-plan").textContent = p.label + " · " + prices.length + (prices.length === 1 ? " can" : " cans");
-    document.getElementById("t-save").textContent = list > visit ? "You save " + money(list - visit) + "/visit" : "";
-    document.getElementById("t-visit").innerHTML = money(visit) + "<small> /visit</small>";
+    $("t-visit").innerHTML = money(visit) + "<small> per visit</small>";
+    $("t-plan").textContent = PLANS[plan];
+    $("t-count").textContent = cans.length + (cans.length === 1 ? " can" : " cans");
+    $("t-save").textContent = list > visit ? "Save " + money(list - visit) : "No discount";
+    if (animate) pop($("t-visit"), "translateY(6px)");
   }
 
-  document.getElementById("picks").addEventListener("click", function (e) {
+  $("picks").addEventListener("click", function (e) {
     var b = e.target.closest("button[data-id]");
     if (!b) return;
     var k = PICKS.filter(function (x) { return x.id === b.dataset.id; })[0];
+    var before = k.n;
     k.n = Math.max(0, Math.min(4, k.n + Number(b.dataset.d)));
-    renderPicks(); quote();
+    if (k.n === before) return;
+    renderPicks(); quote(true);
+    var tile = document.querySelector('#picks .can-add[data-id="' + k.id + '"]');
+    if (k.n > before) pop(tile.querySelector(".badge"), "scale(0.85)");
     var again = document.querySelector('#picks button[data-id="' + k.id + '"][data-d="' + b.dataset.d + '"]');
-    if (again && !again.disabled) again.focus();
-    else document.querySelector('#picks button.can-add[data-id="' + k.id + '"]').focus();
+    (again && !again.disabled ? again : tile).focus();
   });
 
-  document.querySelectorAll(".plans button").forEach(function (b) {
+  document.querySelectorAll("#seg button").forEach(function (b, i) {
     b.addEventListener("click", function () {
+      if (plan === b.dataset.plan) return;
       plan = b.dataset.plan;
-      document.querySelectorAll(".plans button").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
-      renderTable(); renderPicks(); quote();
+      $("seg").style.setProperty("--i", i);
+      document.querySelectorAll("#seg button").forEach(function (x) { x.setAttribute("aria-pressed", String(x === b)); });
+      renderTable(); renderPicks(); quote(true);
     });
   });
 
-  var signupForm = document.getElementById("signup-form");
-  if (signupForm) signupForm.addEventListener("submit", function (e) {
-    e.preventDefault();
-    var f = e.target, ok = document.getElementById("form-ok");
-    var missing = ["f-name", "f-email", "f-address"].filter(function (id) { return !document.getElementById(id).value.trim(); });
-    if (missing.length) {
-      ok.textContent = "Please add your name, email and street address so we can get back to you.";
-      ok.hidden = false;
-      document.getElementById(missing[0]).focus();
-      return;
-    }
-    ok.textContent = "Thanks, " + f.name.value.trim().split(" ")[0] + "! This is a preview, so your request wasn't sent anywhere yet.";
-    ok.hidden = false;
-  });
+  var ba = $("ba"), range = $("ba-range");
+  range.addEventListener("input", function () { ba.style.setProperty("--pos", range.value + "%"); });
 
-  renderTable(); renderPicks(); quote();
+  renderTable(); renderPicks(); quote(false);
 })();
 </script>
 </body>
