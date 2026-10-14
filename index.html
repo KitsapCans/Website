@@ -6,6 +6,7 @@
 <title>Kitsap Cans · Can cleaning on Bainbridge Island</title>
 <meta name="description" content="Kitsap Cans washes garbage, recycling and yard-waste cans at the curb on Bainbridge Island, right after pickup. Monthly plans from $20 a can.">
 <meta name="theme-color" content="#17364A">
+<meta name="color-scheme" content="light">
 <meta property="og:title" content="Kitsap Cans · Clean cans, year-round.">
 <meta property="og:description" content="Garbage, recycling and yard-waste can cleaning at the curb on Bainbridge Island.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%20120%20145%22%3E%3Cpath%20d%3D%22M60%206%20C60%206%2014%2062%2014%2092%20a46%2046%200%200%200%2092%200%20C106%2062%2060%206%2060%206Z%22%20fill%3D%22%232C6E91%22/%3E%3Crect%20x%3D%2240%22%20y%3D%2263%22%20width%3D%2240%22%20height%3D%228%22%20rx%3D%223%22%20fill%3D%22%23fff%22/%3E%3Cpath%20d%3D%22M43%2073%20h34%20l-3%2038%20a4%204%200%200%201%20-4%204%20h-20%20a4%204%200%200%201%20-4%20-4z%22%20fill%3D%22%23fff%22/%3E%3Cpath%20d%3D%22M88%2064%20l2.2%205.8%205.8%202.2%20-5.8%202.2%20-2.2%205.8%20-2.2%20-5.8%20-5.8%20-2.2%205.8%20-2.2z%22%20fill%3D%22%23B6DB4C%22/%3E%3C/svg%3E">
@@ -50,7 +51,7 @@ h3 { font-size: 20px; font-weight: 700; }
 p { margin: 0; }
 :focus-visible { outline: 3px solid var(--lime); outline-offset: 3px; border-radius: 6px; }
 button, a, [role="button"], input[type="range"] { touch-action: manipulation; }
-button, .btn { -webkit-user-select: none; user-select: none; }
+button, .btn { -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; }
 .wrap { max-width: var(--wrap); margin: 0 auto; padding-inline: var(--gutter); }
 .dot { color: var(--lime); }
 .eyebrow { font: 700 13px/1 var(--body); letter-spacing: .14em; text-transform: uppercase; color: var(--blue); }
@@ -76,6 +77,11 @@ button, .btn { -webkit-user-select: none; user-select: none; }
 
 /* Header */
 .site-header { position: sticky; top: 0; z-index: 20; background: var(--navy); padding-top: env(safe-area-inset-top, 0px); }
+/* Material: content scrolls under a frosted navy bar instead of an opaque strip */
+@supports ((-webkit-backdrop-filter: blur(1px)) or (backdrop-filter: blur(1px))) {
+  .site-header { background: rgba(23,54,74,.82); -webkit-backdrop-filter: blur(18px) saturate(160%); backdrop-filter: blur(18px) saturate(160%); }
+}
+@media (prefers-reduced-transparency: reduce) { .site-header { background: var(--navy); -webkit-backdrop-filter: none; backdrop-filter: none; } }
 .nav { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 68px; }
 .brand { display: inline-flex; align-items: center; gap: 10px; color: var(--white); text-decoration: none; font: 700 23px/1 var(--display); letter-spacing: -0.015em; }
 .brand svg { width: 28px; height: 34px; flex: none; }
@@ -106,23 +112,28 @@ button, .btn { -webkit-user-select: none; user-select: none; }
 .bubble.b2 { animation-delay: -2s; } .bubble.b3 { animation-delay: -4s; }
 @keyframes twinkle { 0%, 100% { opacity: 1; transform: scale(1); } 50% { opacity: .35; transform: scale(.8); } }
 @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
-.rise { animation: rise 520ms var(--ease-out) both; animation-delay: calc(var(--d, 0) * 70ms); }
-@keyframes rise { from { opacity: 0; transform: translateY(10px); } }
+.rise { animation: rise 420ms var(--ease-out) both; animation-delay: calc(var(--d, 0) * 60ms); }
+@keyframes rise { from { opacity: 0; transform: translateY(8px); } }
+/* Decorative loops stop when the hero scrolls away (no work for motion nobody sees) */
+.hero.idle .sparkle, .hero.idle .bubble { animation-play-state: paused; }
 @media (min-width: 900px) { .hero-grid { grid-template-columns: 1.1fr .9fr; align-items: center; gap: 56px; } }
 
 /* Before / after */
 .ba-grid { display: grid; gap: 40px; align-items: center; }
 .ba-grid > * { min-width: 0; }
 @media (min-width: 900px) { .ba-grid { grid-template-columns: .9fr 1.1fr; gap: 64px; } }
-.ba { position: relative; aspect-ratio: 4 / 3; max-width: 100%; border-radius: var(--r-lg); overflow: hidden; background: var(--light); --pos: 50%; -webkit-user-select: none; user-select: none; }
+/* Comparison slider: drag anywhere, the line follows the finger 1:1 (pan-y leaves vertical scroll to the browser).
+   Position is applied as clip-path + transform straight on the elements, no layout work per frame. */
+.ba { position: relative; aspect-ratio: 4 / 3; max-width: 100%; border-radius: var(--r-lg); overflow: hidden; background: var(--light); -webkit-user-select: none; user-select: none; -webkit-touch-callout: none; touch-action: pan-y; cursor: ew-resize; }
 .ba svg { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
-.ba .dirty { clip-path: inset(0 calc(100% - var(--pos)) 0 0); }
-.ba .handle { position: absolute; top: 0; bottom: 0; left: var(--pos); width: 3px; margin-left: -1.5px; background: var(--white); box-shadow: 0 0 0 1px rgba(23,54,74,.15); pointer-events: none; }
-.ba .knob { position: absolute; top: 50%; left: 50%; width: 48px; height: 48px; margin: -24px 0 0 -24px; border-radius: 50%; background: var(--white); box-shadow: 0 6px 18px rgba(23,54,74,.3); display: grid; place-items: center; transition: transform 160ms var(--ease-out); }
+.ba .dirty { clip-path: inset(0 50% 0 0); }
+.ba .line { position: absolute; inset: 0; pointer-events: none; transform: translateX(0%); }
+.ba .line::before { content: ""; position: absolute; top: 0; bottom: 0; left: 50%; width: 3px; margin-left: -1.5px; background: var(--white); box-shadow: 0 0 0 1px rgba(23,54,74,.15); }
+.ba .knob { position: absolute; top: 50%; left: 50%; width: 48px; height: 48px; margin: -24px 0 0 -24px; border-radius: 50%; background: var(--white); box-shadow: 0 6px 18px rgba(23,54,74,.3); display: grid; place-items: center; transition: transform 140ms var(--ease-out), box-shadow 140ms var(--ease-out); }
 .ba .knob svg { position: static; width: 24px; height: 24px; }
-.ba input { position: absolute; inset: 0; width: 100%; height: 100%; margin: 0; opacity: 0; cursor: ew-resize; touch-action: pan-y; }
-.ba input:active ~ .handle .knob { transform: scale(1.08); }
-.ba input:focus-visible ~ .handle .knob { outline: 3px solid var(--lime); outline-offset: 3px; }
+.ba.dragging .knob { transform: scale(1.08); box-shadow: 0 10px 24px rgba(23,54,74,.35); }
+.ba input { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.ba input:focus-visible ~ .line .knob { outline: 3px solid var(--lime); outline-offset: 3px; }
 .ba .chip { position: absolute; top: 14px; padding: 7px 12px; border-radius: 999px; font: 700 12px/1 var(--body); letter-spacing: .1em; text-transform: uppercase; pointer-events: none; }
 .ba .chip.l { left: 14px; background: rgba(23,54,74,.85); color: var(--white); }
 .ba .chip.r { right: 14px; background: var(--white); color: var(--navy); }
@@ -233,10 +244,23 @@ details p { padding: 0 20px 18px; color: var(--muted); font-size: 16px; max-widt
 @media (min-width: 860px) { .closer-grid { grid-template-columns: 1.2fr .8fr; } }
 .closer h2 { color: var(--white); }
 .closer p { color: var(--on-navy); margin-top: 14px; max-width: 48ch; }
-.soon { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14); border-radius: var(--r-lg); padding: 24px; display: grid; gap: 10px; }
-.soon b { font: 700 18px/1.3 var(--display); }
-.soon span { color: var(--on-navy); font-size: 15px; }
-.soon .btn { justify-self: start; margin-top: 6px; }
+.ways { background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.14); border-radius: var(--r-lg); padding: 24px; display: grid; gap: 12px; }
+.ways b { font: 700 18px/1.3 var(--display); }
+.ways span { color: var(--on-navy); font-size: 15px; }
+.ways .row { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+.ways .row .btn { flex: 1 1 140px; }
+.btn-ghost { border-color: rgba(255,255,255,.4); color: var(--white); }
+@media (hover: hover) and (pointer: fine) { .btn-ghost:hover { border-color: var(--white); } }
+.closer p a { color: var(--white); font-weight: 600; text-decoration-color: var(--lime); text-underline-offset: 3px; }
+
+/* Phone-only bottom bar: the one action, always a thumb away. Hidden when the closer is on screen. */
+.dock { position: fixed; left: 0; right: 0; bottom: 0; z-index: 15; display: none; gap: 10px; padding: 10px var(--gutter) calc(10px + env(safe-area-inset-bottom, 0px)); background: rgba(251,253,254,.86); -webkit-backdrop-filter: blur(16px) saturate(160%); backdrop-filter: blur(16px) saturate(160%); border-top: 1px solid var(--line); transform: translateY(0); transition: transform 220ms var(--ease-out); }
+.dock .btn { flex: 1; min-height: 50px; }
+.dock .btn-dark { flex: 0 0 auto; width: 50px; padding: 0; }
+.dock .btn-dark svg { width: 20px; height: 20px; }
+.dock.hide { transform: translateY(110%); }
+@media (max-width: 780px) { .dock { display: flex; } body { padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px)); } .quote { position: static; } }
+@media (prefers-reduced-transparency: reduce) { .dock { background: var(--paper); -webkit-backdrop-filter: none; backdrop-filter: none; } }
 
 footer { background: #102A3A; color: var(--on-navy-dim); font-size: 15px; padding-bottom: env(safe-area-inset-bottom, 0px); }
 .foot { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 24px; padding-block: 36px; }
@@ -251,8 +275,9 @@ footer { background: #102A3A; color: var(--on-navy-dim); font-size: 15px; paddin
   html { scroll-behavior: auto; }
   .rise { animation: fade 300ms ease-out both; }
   .sparkle, .bubble { animation: none; }
-  .seg .pill, .btn, .can-add, .can-add svg, summary .pm, .ba .knob { transition-property: opacity, background-color, border-color, color; }
-  .btn:active, .can-add:active, .can-minus:active { transform: none; }
+  .seg .pill, .btn, .can-add, .can-add svg, summary .pm, .ba .knob, .dock { transition-property: opacity, background-color, border-color, color; }
+  .btn:active, .can-add:active, .can-minus:active, .ba.dragging .knob { transform: none; }
+  .dock.hide { opacity: 0; transform: none; pointer-events: none; }
   @keyframes fade { from { opacity: 0; } }
 }
 </style>
@@ -312,7 +337,7 @@ footer { background: #102A3A; color: var(--on-navy-dim); font-size: 15px; paddin
         <p class="sub rise" style="--d:2">We clean garbage, recycling and yard-waste cans on Bainbridge Island, right after the truck empties them. You don't need to be home.</p>
         <div class="actions rise" style="--d:3">
           <a class="btn btn-lime" href="#pricing">See my price <svg aria-hidden="true"><use href="#arrow"/></svg></a>
-          <a class="btn btn-line" href="#how">How it works</a>
+          <a class="btn btn-line" href="tel:+12063127948">Call (206) 312-7948</a>
         </div>
         <ul class="trust rise" style="--d:4">
           <li><svg aria-hidden="true"><use href="#tick"/></svg>Monthly from $20 a can</li>
@@ -398,9 +423,9 @@ footer { background: #102A3A; color: var(--on-navy-dim); font-size: 15px; paddin
           </svg>
           <span class="chip l">Before</span><span class="chip r">After</span>
           <input type="range" id="ba-range" min="0" max="100" value="50" aria-label="Compare a dirty can and a clean can">
-          <div class="handle"><span class="knob"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6 l-6 6 6 6 M15 6 l6 6 -6 6" fill="none" stroke="#17364A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
+          <div class="line" id="ba-line"><span class="knob"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6 l-6 6 6 6 M15 6 l6 6 -6 6" fill="none" stroke="#17364A" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></span></div>
         </div>
-        <p class="ba-note">Illustration looking down into a 96-gallon recycling can.</p>
+        <p class="ba-note">Drag anywhere on the picture. Illustration looking down into a 96-gallon recycling can.</p>
       </div>
     </div>
   </section>
@@ -462,7 +487,8 @@ footer { background: #102A3A; color: var(--on-navy-dim); font-size: 15px; paddin
             <div><span>Compared with one-time</span><span class="save" id="t-save">Save $37</span></div>
           </div>
           <p class="fine">Your biggest can is always the full-price one. The multi-can discount goes on the rest.</p>
-          <a class="btn btn-lime" href="#signup">I want this plan <svg aria-hidden="true"><use href="#arrow"/></svg></a>
+          <a class="btn btn-lime" id="t-book" href="sms:+12063127948">Text us this quote <svg aria-hidden="true"><use href="#arrow"/></svg></a>
+          <p class="fine">Opens a text to (206) 312-7948 with your cans and plan filled in. Or <a href="tel:+12063127948" style="color:var(--white)">call us</a>.</p>
         </aside>
       </div>
     </div>
@@ -500,6 +526,8 @@ footer { background: #102A3A; color: var(--on-navy-dim); font-size: 15px; paddin
         <details><summary>Which day will you come?<span class="pm"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1 V13 M1 7 H13" stroke="#17364A" stroke-width="2.2" stroke-linecap="round"/></svg></span></summary><p>On your regular garbage pickup day. We plan our routes around Bainbridge Disposal's schedule, so your cans are already empty and out.</p></details>
         <details><summary>Can you clean my recycling can? Bainbridge Disposal owns it.<span class="pm"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1 V13 M1 7 H13" stroke="#17364A" stroke-width="2.2" stroke-linecap="round"/></svg></span></summary><p>Yes. Signing up gives us your permission to clean every can you list, including the recycling and yard-waste cans the hauler provides. We use cleaners that are safe for the cans.</p></details>
         <details><summary>What happens to the dirty water?<span class="pm"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1 V13 M1 7 H13" stroke="#17364A" stroke-width="2.2" stroke-linecap="round"/></svg></span></summary><p>We catch all of it. Washington rules say mobile washers can't let wash water reach the ground, storm drains or surface water, so we collect it on our rig and take it to an approved disposal site.</p></details>
+        <details><summary>How do I pay?<span class="pm"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1 V13 M1 7 H13" stroke="#17364A" stroke-width="2.2" stroke-linecap="round"/></svg></span></summary><p>You pay per can, per visit. With a card on file we charge it after each visit; otherwise we send you an invoice, due within 10 days.</p></details>
+        <details><summary>Can I pause or cancel?<span class="pm"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1 V13 M1 7 H13" stroke="#17364A" stroke-width="2.2" stroke-linecap="round"/></svg></span></summary><p>Yes, any time. Just let us know at least 48 hours before your next visit. There's no contract.</p></details>
         <details><summary>Why is monthly so much cheaper?<span class="pm"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1 V13 M1 7 H13" stroke="#17364A" stroke-width="2.2" stroke-linecap="round"/></svg></span></summary><p>Regular visits keep grime from building up, and they let us plan efficient routes on each street. We pass that on to you, so a monthly clean costs up to 44% less than a one-time clean.</p></details>
       </div>
     </div>
@@ -509,13 +537,17 @@ footer { background: #102A3A; color: var(--on-navy-dim); font-size: 15px; paddin
     <div class="wrap closer-grid">
       <div>
         <span class="eyebrow" style="color:var(--lime)">Get started</span>
-        <h2 id="signup-title" style="margin-top:14px">launching soon on bainbridge<span class="dot">.</span></h2>
-        <p>We're getting our crew and rig ready. Watch for us on your street, and check back here to sign up.</p>
+        <h2 id="signup-title" style="margin-top:14px">ready when your cans are<span class="dot">.</span></h2>
+        <p>Text or call <a href="tel:+12063127948">(206) 312-7948</a> with your address and which cans you have. We'll confirm your pickup day and your first clean, usually the same day you reach out.</p>
       </div>
-      <div class="soon">
-        <b>Online sign-up opens soon</b>
-        <span>Use the price builder to see what your cans will cost in the meantime.</span>
-        <a class="btn btn-lime" href="#pricing">See my price <svg aria-hidden="true"><use href="#arrow"/></svg></a>
+      <div class="ways">
+        <b>Three ways to sign up</b>
+        <span>Texting is quickest. Use the price builder above and we'll get your cans and plan in one message.</span>
+        <div class="row">
+          <a class="btn btn-lime" href="sms:+12063127948?&body=Hi%20Kitsap%20Cans%2C%20I%27d%20like%20to%20sign%20up%20for%20can%20cleaning.%20My%20address%20is%3A%20">Text us</a>
+          <a class="btn btn-ghost" href="tel:+12063127948">Call</a>
+          <a class="btn btn-ghost" href="mailto:kitsapcans@gmail.com?subject=Can%20cleaning%20sign-up">Email</a>
+        </div>
       </div>
     </div>
   </section>
@@ -529,11 +561,16 @@ footer { background: #102A3A; color: var(--on-navy-dim); font-size: 15px; paddin
     </div>
     <div class="cols">
       <div><b>Service area</b><span>Bainbridge Island, WA</span></div>
-      <div><b>Contact</b><span>Phone and email coming soon</span></div>
+      <div><b>Contact</b><a href="tel:+12063127948" style="color:var(--on-navy)">(206) 312-7948</a><a href="mailto:kitsapcans@gmail.com" style="color:var(--on-navy)">kitsapcans@gmail.com</a></div>
     </div>
   </div>
   <div class="wrap fine-print">© 2026 Kitsap Cans</div>
 </footer>
+
+<div class="dock" id="dock" aria-label="Quick actions">
+  <a class="btn btn-lime" href="#pricing">See my price</a>
+  <a class="btn btn-dark" href="tel:+12063127948" aria-label="Call Kitsap Cans"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z"/></svg></a>
+</div>
 
 <script>
 (function () {
@@ -598,6 +635,10 @@ footer { background: #102A3A; color: var(--on-navy-dim); font-size: 15px; paddin
     $("t-plan").textContent = PLANS[plan];
     $("t-count").textContent = cans.length + (cans.length === 1 ? " can" : " cans");
     $("t-save").textContent = list > visit ? "Save " + money(list - visit) : "No discount";
+    var lines = PICKS.filter(function (k) { return k.n; }).map(function (k) { return k.n + " x " + k.name.toLowerCase() + " (" + k.gal + ")"; });
+    var msg = "Hi Kitsap Cans, I'd like to sign up.\n" + PLANS[plan] + ": " + (lines.length ? lines.join(", ") : "no cans picked yet") +
+      " = " + money(visit) + " per visit.\nMy address is: ";
+    $("t-book").href = "sms:+12063127948?&body=" + encodeURIComponent(msg);
     if (animate) pop($("t-visit"), "translateY(6px)");
   }
 
@@ -625,8 +666,44 @@ footer { background: #102A3A; color: var(--on-navy-dim); font-size: 15px; paddin
     });
   });
 
-  var ba = $("ba"), range = $("ba-range");
-  range.addEventListener("input", function () { ba.style.setProperty("--pos", range.value + "%"); });
+  // Before/after: 1:1 pointer tracking anywhere on the picture (grab where you like, no jump to the line),
+  // written straight to the two elements each frame. Keyboard still works through the hidden range.
+  var ba = $("ba"), range = $("ba-range"), dirty = ba.querySelector(".dirty"), line = $("ba-line");
+  var pos = 50, grab = 0, raf = 0;
+  function paint() {
+    raf = 0;
+    dirty.style.clipPath = "inset(0 " + (100 - pos) + "% 0 0)";
+    line.style.transform = "translateX(" + (pos - 50) + "%)";
+    range.value = Math.round(pos);
+  }
+  function setPos(p) { pos = Math.max(0, Math.min(100, p)); if (!raf) raf = requestAnimationFrame(paint); }
+  ba.addEventListener("pointerdown", function (e) {
+    if (e.button) return;
+    var r = ba.getBoundingClientRect(), at = (e.clientX - r.left) / r.width * 100;
+    grab = Math.abs(at - pos) < 8 ? at - pos : 0; // grabbed the line: keep the offset; elsewhere: jump to finger
+    ba.setPointerCapture(e.pointerId); ba.classList.add("dragging");
+    setPos(at - grab);
+  });
+  ba.addEventListener("pointermove", function (e) {
+    if (!ba.classList.contains("dragging")) return;
+    var r = ba.getBoundingClientRect();
+    setPos((e.clientX - r.left) / r.width * 100 - grab);
+  });
+  function drop() { ba.classList.remove("dragging"); }
+  ba.addEventListener("pointerup", drop); ba.addEventListener("pointercancel", drop); ba.addEventListener("lostpointercapture", drop);
+  range.addEventListener("input", function () { setPos(Number(range.value)); });
+  range.addEventListener("keydown", function (e) {
+    var step = { ArrowLeft: -5, ArrowRight: 5, Home: -100, End: 100 }[e.key];
+    if (step === undefined) return;
+    e.preventDefault(); setPos(pos + step);
+  });
+
+  // Pause the hero's looping sparkles once it leaves the screen; hide the phone dock where the big CTA already is.
+  if ("IntersectionObserver" in window) {
+    var hero = document.querySelector(".hero"), dock = $("dock"), closer = $("signup");
+    new IntersectionObserver(function (es) { hero.classList.toggle("idle", !es[0].isIntersecting); }).observe(hero);
+    new IntersectionObserver(function (es) { dock.classList.toggle("hide", es[0].isIntersecting); }, { threshold: 0.2 }).observe(closer);
+  }
 
   renderTable(); renderPicks(); quote(false);
 })();
