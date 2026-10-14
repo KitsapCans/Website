@@ -283,6 +283,10 @@ footer { padding: 40px 0 calc(28px + env(safe-area-inset-bottom, 0px)); border-t
 .qdlg-frame iframe { display: block; width: 100%; height: 760px; border: 0; background: transparent; }
 .qdlg-alt { padding: 12px 22px 18px; font-size: 14px; color: rgba(11,15,18,.62); border-top: 1px solid rgba(11,15,18,.1); }
 .qdlg-alt a { color: #0B0F12; font-weight: 600; }
+.qdlg-alt { display: grid; gap: 6px; }
+.qdlg-alt p { margin: 0; }
+.qdlg-sms { font-size: 12px; line-height: 1.45; color: rgba(11,15,18,.6); }
+.qdlg-sms a { font-weight: 500; }
 body.qopen { overflow: hidden; }
 @media (max-width: 600px) { .qdlg { width: 100vw; max-width: 100vw; max-height: 100dvh; height: 100dvh; border-radius: 0; margin: 0; padding-top: env(safe-area-inset-top, 0px); } .qdlg-frame iframe { height: 820px; } }
 @media (prefers-reduced-motion: reduce) { .qdlg[open] { animation: qfade 200ms ease; } }
@@ -481,7 +485,10 @@ body.qopen { overflow: hidden; }
   </div>
   <p class="qdlg-sum" id="qdlg-sum" hidden></p>
   <div class="qdlg-frame"><iframe id="qdlg-iframe" title="Quote request form" loading="lazy"></iframe></div>
-  <p class="qdlg-alt">By requesting a quote you agree to our <a href="/terms" target="_blank" rel="noopener">terms</a> and <a href="/privacy" target="_blank" rel="noopener">privacy policy</a>. Rather talk? Call or text <a href="tel:+12063127948">(206) 312-7948</a>.</p>
+  <div class="qdlg-alt">
+    <p class="qdlg-sms">By sending a quote request, you agree to receive texts from Kitsap Cans about your quote and service. Msg frequency varies. Msg &amp; data rates may apply. Reply STOP to opt out, HELP for help. Consent isn't a condition of purchase. See our <a href="/terms" target="_blank" rel="noopener">Terms and Conditions</a> and <a href="/privacy" target="_blank" rel="noopener">Privacy Policy</a>.</p>
+    <p>Rather talk? Call or text <a href="tel:+12063127948">(206) 312-7948</a>.</p>
+  </div>
 </dialog>
 
 <div class="dock" id="dock" aria-label="Quick actions">
@@ -600,7 +607,7 @@ document.documentElement.classList.add("js");
   /* ---------- Quote popup ---------- */
   var FORM_URL = "https://app.flyra.io/f/i2kx8q1j", dlg = $("quote-dialog"), qframe = $("qdlg-iframe"), sum = $("qdlg-sum");
   function openQuote() {
-    var url = FORM_URL + (quoteSummary ? "?quote_details=" + encodeURIComponent(quoteSummary) : "");
+    var url = FORM_URL;
     if (qframe.getAttribute("src") !== url) qframe.setAttribute("src", url);
     sum.hidden = !quoteSummary; sum.textContent = quoteSummary;
     if (typeof dlg.showModal === "function") { dlg.showModal(); document.body.classList.add("qopen"); }
