@@ -110,7 +110,7 @@ body[data-bg="cream"] .site-header::before { background: rgba(241,236,227,.55); 
 .nav { position: relative; display: flex; align-items: center; justify-content: space-between; min-height: 72px; }
 .brand { display: inline-flex; align-items: center; gap: 10px; font: 800 20px/1 var(--display); letter-spacing: -0.03em; text-decoration: none; }
 .brand i { font-style: normal; color: var(--amber); }
-.brand .mark { width: 30px; height: 46px; flex: none; overflow: visible; filter: drop-shadow(0 4px 10px rgba(47,179,166,.28)); transition: transform 160ms var(--ease); }
+.brand .mark { width: 30px; height: 46px; flex: none; overflow: visible; filter: drop-shadow(0 4px 10px rgba(17,116,108,.35)); transition: transform 160ms var(--ease); }
 .brand:active .mark { transform: scale(0.94); }
 .mark-spark { transform-box: fill-box; transform-origin: center; transition: transform 420ms var(--ease); }
 @media (hover: hover) and (pointer: fine) { .brand:hover .mark-spark { transform: rotate(90deg) scale(1.15); } }
@@ -291,14 +291,14 @@ footer { padding: 40px 0 calc(28px + env(safe-area-inset-bottom, 0px)); border-t
   <div class="wrap nav">
     <a class="brand" href="#top" aria-label="Kitsap Cans, back to top">
       <svg class="mark" viewBox="210 90 560 850" aria-hidden="true" focusable="false">
-        <defs><linearGradient id="markDrop" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#8AF0E2"/><stop offset="1" stop-color="#2FB3A6"/></linearGradient></defs>
-        <path d="M512 100 C430 212 220 468 220 632 A292 292 0 0 0 804 632 C804 468 594 212 512 100Z" fill="#1E8279"/>
+        <defs><linearGradient id="markDrop" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3CC4B4"/><stop offset="1" stop-color="#11746C"/></linearGradient></defs>
+        <path d="M512 100 C430 212 220 468 220 632 A292 292 0 0 0 804 632 C804 468 594 212 512 100Z" fill="#0B5A54"/>
         <path d="M512 100 C430 212 220 468 220 632 C220 800 352 926 512 924 C664 922 768 800 766 646 C764 500 610 250 512 100Z" fill="url(#markDrop)"/>
-        <path d="M427 358 C380 410 340 480 332 548" fill="none" stroke="#fff" stroke-opacity=".5" stroke-width="30" stroke-linecap="round"/>
+        <path d="M427 358 C380 410 340 480 332 548" fill="none" stroke="#fff" stroke-opacity=".38" stroke-width="30" stroke-linecap="round"/>
         <rect x="458" y="398" width="108" height="34" rx="12" fill="#F1ECE3"/>
         <rect x="345" y="425" width="334" height="61" rx="22" fill="#F1ECE3"/>
         <path d="M375 498 H649 L626 762 Q625 772 615 772 H409 Q399 772 398 762Z" fill="#F1ECE3"/>
-        <path d="M459 552 V716 M512 552 V716 M565 552 V716" stroke="#9FD9D0" stroke-width="15" stroke-linecap="round"/>
+        <path d="M459 552 V716 M512 552 V716 M565 552 V716" stroke="#7CC2B8" stroke-width="15" stroke-linecap="round"/>
         <circle cx="429" cy="778" r="35" fill="#0B0F12"/><circle cx="595" cy="778" r="35" fill="#0B0F12"/>
         <path class="mark-spark" d="M686 308 C694 350 712 366 750 372 C712 378 694 394 686 436 C678 394 660 378 622 372 C660 366 678 350 686 308Z" fill="#E8893A" stroke="#0B0F12" stroke-width="9" stroke-linejoin="round"/>
       </svg>
