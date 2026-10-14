@@ -623,7 +623,7 @@ document.documentElement.classList.add("js");
     "  float e = 1.0/256.0;",
     "  float gx = texture2D(uTex, guv+vec2(e,0.0)).g - tG.g, gy = texture2D(uTex, guv+vec2(0.0,e)).g - tG.g;",
     "  vec3 T = normalize(cross(N, vec3(0.0,1.0,0.0)) + vec3(1e-4,0.0,0.0)); vec3 B = cross(N, T);",
-    "  N = normalize(N + (gx*T + gy*B) * 0.9 * (1.0-uMetal));",
+    "  N = normalize(N + (gx*T + gy*B) * 0.4 * (1.0-uMetal));",
     "  float h = clamp((vL.y + 1.3) / 2.4, 0.0, 1.0);",
     "  // --- dirt: sweeps off top to bottom as uClean rises ---",
     "  float edge = 1.0 - uClean*1.32;",
@@ -650,7 +650,7 @@ document.documentElement.classList.add("js");
     "  float ao = 1.0;",
     "  ao *= 1.0 - body*0.45*smoothstep(0.10, 0.0, h);",
     "  ao *= 1.0 - body*0.35*smoothstep(0.92, 1.0, h);",
-    "  ao *= 1.0 - body*0.35*(exp(-pow((vL.y+0.98)/0.035,2.0)) + exp(-pow((vL.y+0.63)/0.035,2.0)) + exp(-pow((vL.y+0.28)/0.035,2.0)));",
+    "  ao *= 1.0 - body*0.45*exp(-pow((vL.y-0.835)/0.035,2.0));",
     "  ao *= 1.0 - lid*0.35*smoothstep(0.14, 0.0, uv.y);",
     "  ao *= 1.0 - (1.0-part)*0.25;",
     "  // --- lights: warm key, wide soft window, aqua rim, the backdrop's dawn glow ---",
@@ -684,11 +684,11 @@ document.documentElement.classList.add("js");
   var PVS = [
     "attribute vec4 aSeed; uniform mat4 uProj, uView, uModel; uniform float uTime, uWash, uPx;",
     "varying float vA;",
-    "vec2 se(float a){ float c=cos(a), s=sin(a); return vec2(sign(c)*pow(abs(c),0.4348), sign(s)*pow(abs(s),0.4348)); }",
+    "vec2 se(float a){ float c=cos(a), s=sin(a); return vec2(sign(c)*pow(abs(c),0.3333), sign(s)*pow(abs(s),0.3333)); }",
     "void main(){ float a = aSeed.x*6.2831; float mist = step(0.82, aSeed.w);",
     "  float t = fract(uTime*(0.5+aSeed.z*0.5) + aSeed.y*7.0);",
-    "  float y = 1.06 - 2.36*t*t; float h = (y+1.3)/2.4; float sc = 0.76 + 0.24*h;",
-    "  vec2 q = se(a) * vec2(1.0, 1.08) * sc * (1.0 + 0.03 + mist*0.3);",
+    "  float y = 1.06 - 2.36*t*t; float h = (y+1.3)/2.4; float sc = 0.80 + 0.19*h;",
+    "  vec2 q = se(a) * vec2(0.64, 0.8) * sc * (1.0 + 0.04 + mist*0.35);",
     "  float sp = smoothstep(0.93, 1.0, t); q *= 1.0 + sp*0.7; y = max(y, -1.3);",
     "  vec4 w = uModel*vec4(q.x, y, q.y, 1.0); vec4 mv = uView*w; gl_Position = uProj*mv;",
     "  float size = mix(2.2 + aSeed.z*3.4, 8.0 + aSeed.z*10.0, mist);",
@@ -775,33 +775,36 @@ document.documentElement.classList.add("js");
     var ib = gl.createBuffer(); gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ib); gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(g.idx), gl.STATIC_DRAW);
     return { vb: vb, ib: ib, n: g.idx.length };
   }
-  var SE = 4.6; // superellipse exponent: a rounded rectangle in plan, like a real cart
+  // Modeled on the standard charcoal residential cart used on the island: smooth walls that widen toward the top,
+  // a recessed front panel, a thick lifting band under the lid, a flat lid with a front lip, a handle molded
+  // into the back, and two large rear wheels. No markings.
+  var SE = 6.0, WX = 0.64, WZ = 0.8; // rounded-rectangle plan; deeper front-to-back than wide
   function se(u) { var a = u * Math.PI * 2, c = Math.cos(a), s = Math.sin(a); return [Math.sign(c) * Math.pow(Math.abs(c), 2 / SE), Math.sign(s) * Math.pow(Math.abs(s), 2 / SE)]; }
   function keyed(keys, v) { // piecewise-linear [v, a, b] keys
     var i; for (i = 1; i < keys.length; i++) if (v <= keys[i][0] || i === keys.length - 1) { var k0 = keys[i - 1], k1 = keys[i], t = Math.max(0, Math.min(1, (v - k0[0]) / (k1[0] - k0[0]))); return [k0[1] + (k1[1] - k0[1]) * t, k0[2] + (k1[2] - k0[2]) * t]; }
     return [keys[0][1], keys[0][2]];
   }
-  var BODY_KEYS = [[0, -1.30, 0.002], [0.03, -1.30, 0.60], [0.05, -1.29, 0.70], [0.07, -1.25, 0.745], [0.09, -1.20, 0.76], [0.84, 0.92, 1.0], [0.87, 0.97, 1.06], [0.93, 1.10, 1.07], [0.96, 1.12, 1.0], [1, 1.12, 0.002]];
+  function sstep(a, b, x) { var t = Math.max(0, Math.min(1, (x - a) / (b - a))); return t * t * (3 - 2 * t); }
+  var BODY_KEYS = [[0, -1.30, 0.002], [0.03, -1.30, 0.62], [0.05, -1.29, 0.74], [0.07, -1.25, 0.79], [0.09, -1.20, 0.80], [0.79, 0.80, 0.985],
+    [0.81, 0.83, 1.0], [0.83, 0.86, 1.07], [0.90, 1.00, 1.075], [0.92, 1.03, 1.05], [0.95, 1.06, 1.03], [0.97, 1.08, 1.0], [1, 1.08, 0.002]];
   function bodyFn(u, v) {
     var k = keyed(BODY_KEYS, v), y = k[0], sc = k[1], q = se(u);
-    if (y > -1.15 && y < 0.9) { // three horizontal strengthening ribs
-      sc += 0.022 * (Math.exp(-Math.pow((y + 0.95) / 0.05, 2)) + Math.exp(-Math.pow((y + 0.6) / 0.05, 2)) + Math.exp(-Math.pow((y + 0.25) / 0.05, 2)));
-    }
-    return [q[0] * sc, y, q[1] * 1.08 * sc];
+    var x = q[0] * sc * WX, z = q[1] * sc * WZ;
+    // recessed front panel with soft edges
+    var w = sstep(0.55, 0.8, q[1]) * (1 - sstep(0.6, 0.78, Math.abs(q[0]))) * sstep(-1.08, -0.94, y) * (1 - sstep(0.58, 0.72, y));
+    return [x, y, z - 0.03 * w];
   }
   function lidFn(u, v) {
     var q = se(u), y, sc;
-    if (v < 0.12) { y = 1.03 + (v / 0.12) * 0.17; sc = 1.12; }
-    else { var t = (v - 0.12) / 0.88, ph = t * Math.PI / 2, p = 2.8;
-      sc = Math.max(0.002, 1.12 * Math.pow(Math.cos(ph), 2 / p)); y = 1.20 + 0.21 * Math.pow(Math.sin(ph), 2 / p);
-      var x = q[0] * sc, ridge = 0, i; for (i = -2; i <= 2; i++) ridge += Math.exp(-Math.pow((x - i * 0.33) / 0.045, 2));
-      y += 0.012 * ridge * Math.min(1, Math.max(0, (Math.sin(ph) - 0.55) / 0.3)); }
-    return [q[0] * sc, y, q[1] * 1.08 * sc];
+    if (v < 0.16) { y = 1.04 + (v / 0.16) * 0.09; sc = 1.1; }
+    else { var t = (v - 0.16) / 0.84, ph = t * Math.PI / 2, p = 7.0;
+      sc = Math.max(0.002, 1.1 * Math.pow(Math.cos(ph), 2 / p)); y = 1.13 + 0.035 * Math.pow(Math.sin(ph), 2 / p); }
+    return [q[0] * sc * WX, y, q[1] * sc * WZ + 0.03];
   }
   var WHEEL_KEYS = [[0, 0.002, -0.07], [0.12, 0.14, -0.075], [0.2, 0.25, -0.08], [0.32, 0.36, -0.06], [0.5, 0.36, 0.0], [0.68, 0.36, 0.06], [0.8, 0.25, 0.085], [0.88, 0.2, 0.035], [0.95, 0.1, 0.07], [1, 0.002, 0.08]];
   function wheelFn(u, v) {
     var k = keyed(WHEEL_KEYS, v), r = k[0], w = k[1], a = u * Math.PI * 2;
-    if (v > 0.33 && v < 0.67) { var tr = Math.abs(((u * 20 + 0.5) % 1) - 0.5); r += 0.014 * Math.min(1, Math.max(0, (tr - 0.10) / 0.06)); }
+    if (v > 0.33 && v < 0.67) { var tr = Math.abs(((u * 20 + 0.5) % 1) - 0.5); r += 0.007 * Math.min(1, Math.max(0, (tr - 0.10) / 0.06)); }
     return [w, r * Math.cos(a), r * Math.sin(a)];
   }
   var CYL_KEYS = [[0, -0.5, 0.002], [0.08, -0.5, 1], [0.92, 0.5, 1], [1, 0.5, 0.002]];
@@ -897,7 +900,7 @@ document.documentElement.classList.add("js");
     gl.uniformMatrix4fv(SP.u.uModel, false, model); gl.uniform1f(SP.u.uAlpha, alpha);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
   }
-  var PAINT = [0.105, 0.118, 0.128], RUBBER = [0.018, 0.018, 0.018], HUB = [0.05, 0.055, 0.06], STEEL = [0.50, 0.51, 0.53], ZINC = [0.56, 0.57, 0.58];
+  var PAINT = [0.085, 0.090, 0.096], RUBBER = [0.018, 0.018, 0.018], HUB = [0.05, 0.055, 0.06], STEEL = [0.50, 0.51, 0.53], ZINC = [0.56, 0.57, 0.58];
   var t0 = performance.now(), last = t0, hidden = false;
   document.addEventListener("visibilitychange", function () { hidden = document.hidden; if (!hidden) { last = performance.now(); requestAnimationFrame(frame); } });
   function frame(now) {
@@ -924,9 +927,9 @@ document.documentElement.classList.add("js");
     gl.bindBuffer(gl.ARRAY_BUFFER, quad); gl.enableVertexAttribArray(SP.a.aPos); gl.enableVertexAttribArray(SP.a.aUV);
     gl.vertexAttribPointer(SP.a.aPos, 3, gl.FLOAT, false, 20, 0); gl.vertexAttribPointer(SP.a.aUV, 2, gl.FLOAT, false, 20, 12);
     var shA = cur.a * (0.5 + 0.15 * cur.cream) * (1 - bob * 4);
-    drawShadow(mul(sh, S(1.15 * cur.s, 1, 1.3 * cur.s)), shA);
-    drawShadow(mul(sh, mul(T(0.8 * cur.s, 0, -0.98 * cur.s), S(0.34 * cur.s, 1, 0.42 * cur.s))), shA * 0.9);
-    drawShadow(mul(sh, mul(T(-0.8 * cur.s, 0, -0.98 * cur.s), S(0.34 * cur.s, 1, 0.42 * cur.s))), shA * 0.9);
+    drawShadow(mul(sh, S(0.74 * cur.s, 1, 0.92 * cur.s)), shA);
+    drawShadow(mul(sh, mul(T(0.6 * cur.s, 0, -0.54 * cur.s), S(0.3 * cur.s, 1, 0.5 * cur.s))), shA * 0.9);
+    drawShadow(mul(sh, mul(T(-0.6 * cur.s, 0, -0.54 * cur.s), S(0.3 * cur.s, 1, 0.5 * cur.s))), shA * 0.9);
     gl.disableVertexAttribArray(SP.a.aPos); gl.disableVertexAttribArray(SP.a.aUV); gl.depthMask(true);
 
     gl.useProgram(P.p);
@@ -936,18 +939,14 @@ document.documentElement.classList.add("js");
     // body and lid
     drawMesh(body, base, PAINT, 0, 1, 0.36, 0, cur.a);
     drawMesh(lidM, base, PAINT, 1, 1, 0.34, 0, cur.a);
-    // wheels and axle (wheel axis is x)
-    drawMesh(wheel, mul(base, T(0.80, -0.94, -0.98)), RUBBER, 2, 0, 0.78, 0, cur.a);
-    drawMesh(wheel, mul(base, mul(T(-0.80, -0.94, -0.98), RY(Math.PI))), RUBBER, 2, 0, 0.78, 0, cur.a);
-    drawMesh(cyl, mul(base, mul(T(0, -0.94, -0.98), mul(RZ(Math.PI / 2), S(0.035, 1.75, 0.035)))), STEEL, 2, 0, 0.35, 1, cur.a);
-    // handle: bar across the back with two brackets down to the rim
-    drawMesh(cyl, mul(base, mul(T(0, 1.27, -1.2), mul(RZ(Math.PI / 2), S(0.045, 2.3, 0.045)))), STEEL, 2, 0, 0.32, 1, cur.a);
-    drawMesh(cyl, mul(base, mul(between([0.8, 0.98, -0.98], [0.8, 1.27, -1.2]), S(0.04, 1, 0.04))), STEEL, 2, 0, 0.32, 1, cur.a);
-    drawMesh(cyl, mul(base, mul(between([-0.8, 0.98, -0.98], [-0.8, 1.27, -1.2]), S(0.04, 1, 0.04))), STEEL, 2, 0, 0.32, 1, cur.a);
-    // lift bar at the front
-    drawMesh(cyl, mul(base, mul(T(0, -0.98, 1.0), mul(RZ(Math.PI / 2), S(0.045, 1.05, 0.045)))), ZINC, 2, 0, 0.45, 1, cur.a);
-    drawMesh(cyl, mul(base, mul(between([0.45, -0.98, 0.78], [0.45, -0.98, 1.0]), S(0.04, 1, 0.04))), ZINC, 2, 0, 0.45, 1, cur.a);
-    drawMesh(cyl, mul(base, mul(between([-0.45, -0.98, 0.78], [-0.45, -0.98, 1.0]), S(0.04, 1, 0.04))), ZINC, 2, 0, 0.45, 1, cur.a);
+    // two large rear wheels on a steel axle (wheel axis is x)
+    drawMesh(wheel, mul(base, mul(T(0.6, -0.88, -0.54), S(1, 1.17, 1.17))), RUBBER, 2, 0, 0.78, 0, cur.a);
+    drawMesh(wheel, mul(base, mul(mul(T(-0.6, -0.88, -0.54), RY(Math.PI)), S(1, 1.17, 1.17))), RUBBER, 2, 0, 0.78, 0, cur.a);
+    drawMesh(cyl, mul(base, mul(T(0, -0.88, -0.54), mul(RZ(Math.PI / 2), S(0.04, 1.18, 0.04)))), STEEL, 2, 0, 0.35, 1, cur.a);
+    // handle molded into the back, same plastic as the body
+    drawMesh(cyl, mul(base, mul(T(0, 1.12, -0.92), mul(RZ(Math.PI / 2), S(0.065, 1.0, 0.065)))), PAINT, 2, 0, 0.4, 0, cur.a);
+    drawMesh(cyl, mul(base, mul(between([0.44, 0.98, -0.8], [0.44, 1.12, -0.92]), S(0.075, 1, 0.075))), PAINT, 2, 0, 0.4, 0, cur.a);
+    drawMesh(cyl, mul(base, mul(between([-0.44, 0.98, -0.8], [-0.44, 1.12, -0.92]), S(0.075, 1, 0.075))), PAINT, 2, 0, 0.4, 0, cur.a);
     gl.disableVertexAttribArray(P.a.aPos); gl.disableVertexAttribArray(P.a.aNrm); gl.disableVertexAttribArray(P.a.aUV);
     // water
     if (cur.wash > 0.01) {
