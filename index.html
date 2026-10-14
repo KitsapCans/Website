@@ -264,6 +264,28 @@ footer { padding: 40px 0 calc(28px + env(safe-area-inset-bottom, 0px)); border-t
 @media (max-width: 780px) { .dock { display: flex; } body { padding-bottom: calc(70px + env(safe-area-inset-bottom, 0px)); } .quote { position: static; } }
 @media (prefers-reduced-transparency: reduce) { .dock, .site-header::before { -webkit-backdrop-filter: none; backdrop-filter: none; } .dock { background: var(--ink); } .site-header::before { background: var(--ink); } body[data-bg="cream"] .site-header::before { background: var(--cream); } }
 
+/* Quote popup: the Flyra lead form inside a native dialog. Submitting it creates the lead in Flyra. */
+.qdlg { width: min(560px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); padding: 0; border: 0; border-radius: 24px; background: var(--cream); color: #0B0F12; box-shadow: 0 30px 80px rgba(0,0,0,.45); overflow: hidden; display: none; flex-direction: column; }
+.qdlg[open] { display: flex; animation: qin 220ms var(--ease); }
+.qdlg::backdrop { background: rgba(5,8,10,.62); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); animation: qfade 220ms var(--ease); }
+@keyframes qin { from { opacity: 0; transform: translateY(12px) scale(0.97); } }
+@keyframes qfade { from { opacity: 0; } }
+.qdlg-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 22px 22px 6px; }
+.qdlg .eyebrow { color: rgba(11,15,18,.6); }
+.qdlg-title { margin-top: 8px; font: 800 30px/1 var(--display); letter-spacing: -0.04em; }
+.qdlg-title em { color: var(--amber); font-style: normal; font-family: var(--display); }
+.qdlg-close { flex: none; width: 44px; height: 44px; border-radius: 50%; border: 1px solid rgba(11,15,18,.14); background: #fff; color: #0B0F12; display: grid; place-items: center; cursor: pointer; transition: transform 150ms var(--ease), background-color 150ms var(--ease); }
+.qdlg-close svg { width: 18px; height: 18px; }
+.qdlg-close:active { transform: scale(0.94); }
+@media (hover: hover) and (pointer: fine) { .qdlg-close:hover { background: var(--cream-2); } }
+.qdlg-sum { margin: 8px 22px 0; padding: 10px 14px; border-radius: 12px; background: #fff; font-size: 14px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.qdlg-frame { flex: 1; min-height: 0; overflow: auto; -webkit-overflow-scrolling: touch; overscroll-behavior: contain; }
+.qdlg-frame iframe { display: block; width: 100%; height: 760px; border: 0; background: transparent; }
+.qdlg-alt { padding: 12px 22px 18px; font-size: 14px; color: rgba(11,15,18,.62); border-top: 1px solid rgba(11,15,18,.1); }
+.qdlg-alt a { color: #0B0F12; font-weight: 600; }
+body.qopen { overflow: hidden; }
+@media (max-width: 600px) { .qdlg { width: 100vw; max-width: 100vw; max-height: 100dvh; height: 100dvh; border-radius: 0; margin: 0; padding-top: env(safe-area-inset-top, 0px); } .qdlg-frame iframe { height: 820px; } }
+@media (prefers-reduced-motion: reduce) { .qdlg[open] { animation: qfade 200ms ease; } }
 @media (prefers-reduced-motion: reduce) {
   .js .reveal .w > span { transform: none; transition: none; }
   .js .fade { transform: none; transition: opacity 300ms ease; }
@@ -406,8 +428,8 @@ footer { padding: 40px 0 calc(28px + env(safe-area-inset-bottom, 0px)); border-t
             <div><span id="t-save-label">Compared with one-time</span><span class="save" id="t-save">Save $29 (31%)</span></div>
           </div>
           <p class="fine">Same price for any size can. No contract; pause or cancel any time.</p>
-          <a class="btn btn-amber" id="t-book" href="sms:+12063127948">Text us this quote <svg aria-hidden="true"><use href="#arrow"/></svg></a>
-          <p class="fine">Opens a text to (206) 312-7948 with your cans and plan filled in. Or <a href="tel:+12063127948">call us</a>.</p>
+          <button type="button" class="btn btn-amber" id="t-book" data-quote>Get this quote <svg aria-hidden="true"><use href="#arrow"/></svg></button>
+          <p class="fine">Takes 30 seconds: your name, address and phone. We text you to confirm. Or <a href="tel:+12063127948">call us</a>.</p>
         </aside>
       </div>
     </div>
@@ -433,9 +455,9 @@ footer { padding: 40px 0 calc(28px + env(safe-area-inset-bottom, 0px)); border-t
     <div class="wrap">
       <p class="eyebrow fade">Get started</p>
       <h2 id="signup-title" class="display h-sec reveal" style="margin-top:14px">ready when your <em>cans</em> are.</h2>
-      <p class="lede fade">Text or call with your address and which cans you have. We'll confirm your pickup day and your first clean, usually the same day you reach out.</p>
+      <p class="lede fade">Send us your name, address and phone number. We'll text you to confirm your pickup day and your first clean, usually the same day.</p>
       <div class="ways fade" style="--d:120ms">
-        <a class="btn btn-amber" href="sms:+12063127948?&body=Hi%20Kitsap%20Cans%2C%20I%27d%20like%20to%20sign%20up%20for%20can%20cleaning.%20My%20address%20is%3A%20">Text us</a>
+        <button type="button" class="btn btn-amber" data-quote>Get a quote</button>
         <a class="btn btn-line" href="tel:+12063127948">Call (206) 312-7948</a>
         <a class="btn btn-line" href="mailto:kitsapcans@gmail.com?subject=Can%20cleaning%20sign-up">Email</a>
       </div>
@@ -451,6 +473,16 @@ footer { padding: 40px 0 calc(28px + env(safe-area-inset-bottom, 0px)); border-t
     <span><a href="tel:+12063127948">(206) 312-7948</a> · <a href="mailto:kitsapcans@gmail.com">kitsapcans@gmail.com</a></span>
   </div>
 </footer>
+
+<dialog class="qdlg" id="quote-dialog" aria-labelledby="qdlg-title">
+  <div class="qdlg-head">
+    <div><p class="eyebrow">Free quote</p><h2 id="qdlg-title" class="qdlg-title">get your quote<em>.</em></h2></div>
+    <button type="button" class="qdlg-close" id="qdlg-close" aria-label="Close"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6 L18 18 M18 6 L6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg></button>
+  </div>
+  <p class="qdlg-sum" id="qdlg-sum" hidden></p>
+  <div class="qdlg-frame"><iframe id="qdlg-iframe" title="Quote request form" loading="lazy"></iframe></div>
+  <p class="qdlg-alt">Rather talk? Call or text <a href="tel:+12063127948">(206) 312-7948</a>.</p>
+</dialog>
 
 <div class="dock" id="dock" aria-label="Quick actions">
   <a class="btn btn-amber" href="#pricing">See my price</a>
@@ -508,7 +540,7 @@ document.documentElement.classList.add("js");
   var ORDER = ["monthly", "quarterly", "once"];
   var pct = function (part, whole) { return Math.round((1 - part / whole) * 100); };
   ["monthly", "quarterly"].forEach(function (p) { $("pct-" + p).textContent = "save up to " + Math.max.apply(null, CANS.map(function (c) { return pct(c.price[p], c.price.once); })) + "%"; });
-  var plan = "monthly";
+  var plan = "monthly", quoteSummary = "";
   var money = function (v) { var r = Math.round(v * 100) / 100; return "$" + (r % 1 ? r.toFixed(2) : String(r)); };
   var pop = function (el, from) {
     if (!el || !el.animate) return;
@@ -541,7 +573,7 @@ document.documentElement.classList.add("js");
     if (plan !== "once") { $("t-save-label").textContent = "Compared with one-time"; $("t-save").textContent = once > visit ? "Save " + money(once - visit) + " (" + pct(visit, once) + "%)" : "Pick a can"; }
     else { $("t-save-label").textContent = "On the monthly plan"; $("t-save").textContent = count ? money(monthly) + " per visit (" + pct(monthly, once) + "% off)" : "Pick a can"; }
     var lines = CANS.filter(function (c) { return c.n; }).map(function (c) { return c.n + " x " + c.name.toLowerCase(); });
-    $("t-book").href = "sms:+12063127948?&body=" + encodeURIComponent("Hi Kitsap Cans, I'd like to sign up.\n" + PLANS[plan] + ": " + (lines.length ? lines.join(", ") : "no cans picked yet") + " = " + money(visit) + " per visit.\nMy address is: ");
+    quoteSummary = lines.length ? PLANS[plan] + ": " + lines.join(", ") + " = " + money(visit) + " per visit" : "";
     if (animate) pop($("t-visit"), "translateY(6px)");
   }
   $("picks").addEventListener("click", function (e) {
@@ -564,6 +596,21 @@ document.documentElement.classList.add("js");
     });
   });
   renderTable(); renderPicks(); quote(false);
+
+  /* ---------- Quote popup ---------- */
+  var FORM_URL = "https://app.flyra.io/f/i2kx8q1j", dlg = $("quote-dialog"), qframe = $("qdlg-iframe"), sum = $("qdlg-sum");
+  function openQuote() {
+    var url = FORM_URL + (quoteSummary ? "?quote_details=" + encodeURIComponent(quoteSummary) : "");
+    if (qframe.getAttribute("src") !== url) qframe.setAttribute("src", url);
+    sum.hidden = !quoteSummary; sum.textContent = quoteSummary;
+    if (typeof dlg.showModal === "function") { dlg.showModal(); document.body.classList.add("qopen"); }
+    else window.open(url, "_blank", "noopener");
+  }
+  function closeQuote() { if (dlg.open) dlg.close(); }
+  dlg.addEventListener("close", function () { document.body.classList.remove("qopen"); });
+  dlg.addEventListener("click", function (e) { if (e.target === dlg) closeQuote(); }); // click on the backdrop
+  $("qdlg-close").addEventListener("click", closeQuote);
+  document.querySelectorAll("[data-quote]").forEach(function (b) { b.addEventListener("click", openQuote); });
 
   /* ---------- Scroll choreography: wash steps, header progress ---------- */
   var wash = $("how"), steps = document.querySelectorAll("#steps .step"), rails = [$("r1"), $("r2"), $("r3")];
