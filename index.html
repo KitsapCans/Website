@@ -147,6 +147,10 @@ body[data-bg="cream"] .site-header::before { background: rgba(241,236,227,.55); 
 .flow { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; font: 600 14px/1 var(--display); }
 .flow span { padding: 12px 16px; border: 1px solid var(--line); border-radius: 999px; background: var(--card); }
 .flow i { font-style: normal; color: var(--amber); }
+.art-slot { min-height: 240px; margin-bottom: 24px; }
+.closer-slot { margin: 24px 0 0; min-height: 260px; }
+@media (min-width: 900px) { .closer-slot { display: none; } }
+@media (min-width: 900px) { .art-slot { min-height: 300px; margin-bottom: 32px; } }
 .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 0; padding: 0; list-style: none; }
 .stats li { border-top: 2px solid var(--fg); padding-top: 14px; }
 .stats b { display: block; font: 800 clamp(30px, 4vw, 52px)/1 var(--display); letter-spacing: -0.04em; }
@@ -329,11 +333,14 @@ footer { padding: 40px 0 calc(28px + env(safe-area-inset-bottom, 0px)); border-t
           <p class="lede fade">Can water carries food waste and bacteria. We never let it run into a storm drain, a ditch or Puget Sound. Every drop is pulled into the tank on our rig and taken to an approved disposal site.</p>
           <div class="flow fade" style="--d:120ms;margin-top:24px" aria-label="Where the water goes"><span>Your can</span><i>→</i><span>Our rig's tank</span><i>→</i><span>Approved disposal</span></div>
         </div>
-        <ul class="stats fade" style="--d:200ms">
-          <li><b>100%</b><span>of wash water recovered on the rig</span></li>
-          <li><b>0</b><span>gallons to storm drains or the Sound</span></li>
-          <li><b>~4 min</b><span>per can, curbside, after pickup</span></li>
-        </ul>
+        <div>
+          <div class="art-slot" id="art-captured" aria-hidden="true"></div>
+          <ul class="stats fade" style="--d:200ms">
+            <li><b>100%</b><span>of wash water recovered on the rig</span></li>
+            <li><b>0</b><span>gallons to storm drains or the Sound</span></li>
+            <li><b>~4 min</b><span>per can, curbside, after pickup</span></li>
+          </ul>
+        </div>
       </div>
     </div>
   </section>
@@ -407,6 +414,7 @@ footer { padding: 40px 0 calc(28px + env(safe-area-inset-bottom, 0px)); border-t
         <a class="btn btn-line" href="mailto:kitsapcans@gmail.com?subject=Can%20cleaning%20sign-up">Email</a>
       </div>
       <p class="contact-line fade" style="--d:200ms">kitsapcans@gmail.com · Bainbridge Island, WA</p>
+      <div class="art-slot closer-slot" id="art-closer" aria-hidden="true"></div>
     </div>
   </section>
 </main>
@@ -556,10 +564,11 @@ document.documentElement.classList.add("js");
   window.addEventListener("resize", onScroll);
   onScroll();
 
-  /* ---------- 3D can: plain WebGL, no library ---------- */
+  /* ---------- 3D cart: plain WebGL, no library ---------- */
   var canvas = $("gl");
   var gl = canvas.getContext("webgl", { alpha: true, antialias: true, premultipliedAlpha: true, powerPreference: "high-performance" });
   if (!gl) { canvas.remove(); return; }
+  var PREC = "#ifdef GL_FRAGMENT_PRECISION_HIGH\nprecision highp float;\n#else\nprecision mediump float;\n#endif\n";
 
   var VS = [
     "attribute vec3 aPos; attribute vec3 aNrm; attribute vec2 aUV;",
@@ -567,63 +576,112 @@ document.documentElement.classList.add("js");
     "varying vec3 vN, vP, vL; varying vec2 vUV;",
     "void main(){ vec4 w = uModel*vec4(aPos,1.0); vP = w.xyz; vL = aPos; vN = normalize(uNrm*aNrm); vUV = aUV; gl_Position = uProj*uView*w; }"
   ].join("\n");
-  var FS = [
-    "precision highp float;",
+  // Physically based plastic/rubber/steel with a procedural studio environment. Dirt, dust, drips and
+  // running water are built from one tiling noise texture sampled in each part's own (around, along) space.
+  var FS = PREC + [
     "varying vec3 vN, vP, vL; varying vec2 vUV;",
-    "uniform vec3 uColor, uCam; uniform float uClean, uWash, uGrime, uAlpha, uTime, uCream;",
-    "float hash(vec3 p){ p=fract(p*0.3183099+vec3(.1,.2,.3)); p*=17.0; return fract(p.x*p.y*p.z*(p.x+p.y+p.z)); }",
-    "float noise(vec3 x){ vec3 i=floor(x); vec3 f=fract(x); f=f*f*(3.0-2.0*f);",
-    "  return mix(mix(mix(hash(i),hash(i+vec3(1,0,0)),f.x),mix(hash(i+vec3(0,1,0)),hash(i+vec3(1,1,0)),f.x),f.y),",
-    "             mix(mix(hash(i+vec3(0,0,1)),hash(i+vec3(1,0,1)),f.x),mix(hash(i+vec3(0,1,1)),hash(i+vec3(1,1,1)),f.x),f.y),f.z); }",
+    "uniform sampler2D uTex;",
+    "uniform vec3 uColor, uCam; uniform float uClean, uWash, uGrime, uAlpha, uTime, uCream, uMetal, uRough, uPart;",
+    "const float PI = 3.14159265;",
+    "vec3 Fs(vec3 F0, float c){ return F0 + (1.0-F0)*pow(1.0-c,5.0); }",
+    "float Dggx(float NdH, float a){ float a2=a*a; float d = NdH*NdH*(a2-1.0)+1.0; return a2/(PI*d*d+1e-5); }",
+    "float Gs(float NdV, float NdL, float a){ float k=(a+1.0); k=k*k/8.0; return (NdV/(NdV*(1.0-k)+k))*(NdL/(NdL*(1.0-k)+k)); }",
+    "vec3 lit(vec3 N, vec3 V, vec3 L, vec3 C, vec3 base, vec3 F0, float rough, float metal, float wrap, float widen){",
+    "  vec3 H = normalize(L+V); float NdL = dot(N,L); float NdLw = clamp((NdL+wrap)/(1.0+wrap),0.0,1.0); NdL = max(NdL,0.0);",
+    "  float NdV = max(dot(N,V),1e-3), NdH = max(dot(N,H),0.0), VdH = max(dot(V,H),0.0);",
+    "  float a = clamp(rough*rough + widen, 0.003, 1.0); vec3 F = Fs(F0, VdH);",
+    "  vec3 spec = Dggx(NdH,a)*Gs(NdV,max(NdL,1e-3),a)*F/(4.0*NdV*max(NdL,1e-3)+1e-4);",
+    "  return ((1.0-F)*(1.0-metal)*base/PI*NdLw + spec*NdL)*C; }",
+    "vec3 aces(vec3 x){ return clamp((x*(2.51*x+0.03))/(x*(2.43*x+0.59)+0.14),0.0,1.0); }",
     "void main(){",
-    "  vec3 N = normalize(vN); vec3 V = normalize(uCam - vP);",
-    "  float h = clamp((vL.y + 1.3) / 2.7, 0.0, 1.0);",
-    "  // grime: two octaves of noise, heavier toward the bottom, plus drips from the rim",
-    "  vec3 sp = vec3(vL.x, vL.y*0.45, vL.z); float g = noise(sp*2.8 + 3.0)*0.55 + noise(sp*7.0)*0.45;",
-    "  float drip = smoothstep(0.55, 0.9, noise(vec3(vL.x*9.0, 0.0, vL.z*9.0))) * smoothstep(0.95, 0.6, h);",
-    "  g = max(smoothstep(0.38, 0.72, g), drip*0.8);",
-    "  g = max(g, smoothstep(0.35, 0.0, h)*0.55);",
-    "  float edge = 1.0 - uClean*1.35;",
-    "  float wipe = 1.0 - smoothstep(edge - 0.1, edge + 0.1, h);",
-    "  float dirt = g * wipe * uGrime;",
-    "  float wet = (1.0 - smoothstep(0.0, 0.14, abs(h - edge))) * uWash * uGrime;",
-    "  vec3 grimeCol = mix(vec3(0.27,0.21,0.12), vec3(0.20,0.24,0.11), noise(vL*4.0));",
-    "  float dust = wipe * uGrime * 0.6;",
-    "  vec3 base = mix(uColor, uColor*0.55 + vec3(0.11,0.09,0.05), dust);",
-    "  base = mix(base, grimeCol, dirt*0.9);",
-    "  float rough = mix(0.34, 0.95, max(dirt, dust*1.3)); rough = mix(rough, 0.12, wet);",
-    "  // three lights: warm key, aqua rim, soft fill",
-    "  vec3 L1 = normalize(vec3(0.6, 0.9, 0.7)); vec3 L2 = normalize(vec3(-0.8, 0.3, -0.6)); vec3 L3 = normalize(vec3(-0.4, -0.2, 0.9));",
-    "  vec3 C1 = mix(vec3(1.0,0.86,0.72), vec3(1.0,0.98,0.95), uCream)*1.15; vec3 C2 = mix(vec3(0.43,0.89,0.83), vec3(0.9,0.95,1.0), uCream)*0.9; vec3 C3 = vec3(0.55,0.6,0.7)*0.35;",
-    "  float d1 = max(dot(N,L1),0.0), d2 = max(dot(N,L2),0.0), d3 = max(dot(N,L3),0.0);",
-    "  vec3 col = base * (vec3(0.07,0.08,0.1)*mix(1.0,3.0,uCream) + C1*d1 + C2*d2 + C3*d3);",
-    "  float shin = mix(90.0, 6.0, rough); float specAmt = mix(0.9, 0.08, rough);",
-    "  vec3 H1 = normalize(L1+V), H2 = normalize(L2+V);",
-    "  col += C1 * pow(max(dot(N,H1),0.0), shin) * specAmt + C2 * pow(max(dot(N,H2),0.0), shin*0.8) * specAmt*0.7;",
-    "  // fake environment: bright sky above, dark ground, only on clean paint",
-    "  vec3 R = reflect(-V, N); float env = smoothstep(-0.4, 0.9, R.y);",
-    "  float fres = pow(1.0 - max(dot(N,V),0.0), 3.0);",
-    "  col += mix(vec3(0.05), mix(vec3(0.55,0.6,0.65), vec3(0.95,0.93,0.9), uCream), env) * (1.0 - rough) * (0.08 + fres*0.5);",
-    "  col += wet * vec3(0.6,0.95,0.9) * 0.25;",
-    "  col = col / (col + vec3(0.9));",
-    "  col = pow(col, vec3(1.0/1.9));",
+    "  vec3 V = normalize(uCam - vP); vec3 N = normalize(vN);",
+    "  float body = step(uPart, 0.5), lid = step(0.5, uPart)*step(uPart, 1.5), part = step(uPart, 1.5);",
+    "  vec2 uv = vUV;",
+    "  vec4 tA = texture2D(uTex, uv*vec2(3.0, 1.0));",          // blotches / grain / streaks / cells at part scale
+    "  vec2 guv = uv*vec2(28.0, 9.0); vec4 tG = texture2D(uTex, guv);",   // fine molded grain
+    "  float e = 1.0/256.0;",
+    "  float gx = texture2D(uTex, guv+vec2(e,0.0)).g - tG.g, gy = texture2D(uTex, guv+vec2(0.0,e)).g - tG.g;",
+    "  vec3 T = normalize(cross(N, vec3(0.0,1.0,0.0)) + vec3(1e-4,0.0,0.0)); vec3 B = cross(N, T);",
+    "  N = normalize(N + (gx*T + gy*B) * 0.9 * (1.0-uMetal));",
+    "  float h = clamp((vL.y + 1.3) / 2.4, 0.0, 1.0);",
+    "  // --- dirt: sweeps off top to bottom as uClean rises ---",
+    "  float edge = 1.0 - uClean*1.32;",
+    "  float wipe = (1.0 - smoothstep(edge-0.07, edge+0.07, h)); wipe = mix(wipe, 1.0 - smoothstep(0.0, 0.12, uClean), lid);",
+    "  float blotch = smoothstep(0.46, 0.74, tA.r*0.65 + tA.a*0.35);",
+    "  float drips = smoothstep(0.58, 0.86, tA.b) * smoothstep(0.42 - tA.a*0.45, 0.72, h) * smoothstep(1.0, 0.86, h) * body;",
+    "  float band = smoothstep(0.30, 0.0, h) * (0.45 + 0.55*tA.g) * body;",
+    "  float dirt = clamp(max(max(blotch*0.85, drips), band), 0.0, 1.0) * wipe * uGrime * part;",
+    "  float film = (0.30 + 0.35*tA.r) * wipe * uGrime * part;",
+    "  // --- water while washing: the already-clean area is wet and water sheets down it ---",
+    "  float wet = clamp((1.0 - wipe)*0.85 + (1.0 - smoothstep(0.0, 0.12, abs(h-edge))), 0.0, 1.0) * uWash * uGrime * part;",
+    "  float run = smoothstep(0.55, 0.9, texture2D(uTex, vec2(uv.x*7.0, uv.y*1.6 + uTime*0.33)).b) * wet * body;",
+    "  // --- surface ---",
+    "  vec3 base = uColor;",
+    "  float scuff = smoothstep(0.80, 0.92, tG.b) * (1.0-uMetal) * part; base += scuff*0.05;",
+    "  base = mix(base, base*0.75 + vec3(0.055,0.05,0.04), film);",
+    "  vec3 grimeCol = mix(vec3(0.20,0.155,0.085), vec3(0.12,0.13,0.07), tA.a);",
+    "  base = mix(base, grimeCol, dirt*0.92);",
+    "  float rough = uRough + (tG.g-0.5)*0.14 + scuff*0.2; rough = mix(rough, 0.85, film*0.7); rough = mix(rough, 0.98, dirt);",
+    "  base = mix(base, base*0.72, wet*0.6); rough = mix(rough, 0.07, wet); rough = mix(rough, 0.03, run);",
+    "  rough = clamp(rough, 0.03, 1.0);",
+    "  vec3 F0 = mix(vec3(0.04 + wet*0.01 + run*0.02), base, uMetal);",
+    "  // --- ambient occlusion from the shape ---",
+    "  float ao = 1.0;",
+    "  ao *= 1.0 - body*0.45*smoothstep(0.10, 0.0, h);",
+    "  ao *= 1.0 - body*0.35*smoothstep(0.92, 1.0, h);",
+    "  ao *= 1.0 - body*0.35*(exp(-pow((vL.y+0.98)/0.035,2.0)) + exp(-pow((vL.y+0.63)/0.035,2.0)) + exp(-pow((vL.y+0.28)/0.035,2.0)));",
+    "  ao *= 1.0 - lid*0.35*smoothstep(0.14, 0.0, uv.y);",
+    "  ao *= 1.0 - (1.0-part)*0.25;",
+    "  // --- lights: warm key, wide soft window, aqua rim, the backdrop's dawn glow ---",
+    "  vec3 col = vec3(0.0);",
+    "  vec3 Lk = normalize(vec3(0.55, 0.75, 0.55)); vec3 Ck = mix(vec3(1.0,0.80,0.60)*2.6, vec3(1.0,0.97,0.93)*2.2, uCream);",
+    "  vec3 Lw = normalize(vec3(-0.5, 0.35, 0.8));  vec3 Cw = mix(vec3(0.72,0.84,0.95)*1.2, vec3(1.0)*1.4, uCream);",
+    "  vec3 Lr = normalize(vec3(-0.7, 0.45, -0.6)); vec3 Cr = mix(vec3(0.45,0.95,0.88)*1.7, vec3(0.9,0.95,1.0)*0.9, uCream);",
+    "  vec3 Lg = normalize(vec3(0.85, 0.15, -0.35)); vec3 Cg = vec3(0.95,0.50,0.20)*1.2*(1.0-uCream);",
+    "  col += lit(N,V,Lk,Ck, base,F0,rough,uMetal, 0.2, 0.02);",
+    "  col += lit(N,V,Lw,Cw, base,F0,rough,uMetal, 0.3, 0.14);",
+    "  col += lit(N,V,Lr,Cr, base,F0,rough,uMetal, 0.0, 0.03);",
+    "  col += lit(N,V,Lg,Cg, base,F0,rough,uMetal, 0.5, 0.25);",
+    "  float up = N.y*0.5+0.5;",
+    "  vec3 sky = mix(vec3(0.10,0.13,0.17), vec3(0.95,0.93,0.90), uCream);",
+    "  vec3 gnd = mix(vec3(0.030,0.028,0.026), vec3(0.42,0.39,0.35), uCream);",
+    "  col += mix(gnd, sky, up) * base * (1.0-uMetal) * 0.9;",
+    "  // --- environment reflection: dark studio with one soft window and the warm glow, or a bright room on cream ---",
+    "  vec3 R = reflect(-V, N); float NdV = max(dot(N,V),0.0);",
+    "  vec3 Fr = F0 + (max(vec3(1.0-rough), F0) - F0)*pow(1.0-NdV, 5.0);",
+    "  vec3 env = mix(gnd, sky, smoothstep(0.25, 0.85, R.y*0.5+0.5));",
+    "  env += Cw * smoothstep(0.86 - rough*0.6, 0.995 - rough*0.35, dot(R, Lw)) * mix(0.6, 0.12, rough);",
+    "  env += Cg * pow(max(dot(R, Lg),0.0), mix(16.0, 2.0, rough)) * 0.5;",
+    "  col += env * Fr * mix(1.0, 0.45, rough);",
+    "  col *= 0.7 + 0.3*ao; col *= ao*0.5+0.5;",
+    "  col += wet * vec3(0.5,0.9,0.85) * 0.03;",
+    "  col = aces(col*0.95); col = pow(col, vec3(1.0/2.2));",
     "  gl_FragColor = vec4(col*uAlpha, uAlpha);",
     "}"
   ].join("\n");
+  // Droplets slide down the actual body shape from the rim, then splash out at the base. A few are mist.
   var PVS = [
     "attribute vec4 aSeed; uniform mat4 uProj, uView, uModel; uniform float uTime, uWash, uPx;",
     "varying float vA;",
-    "void main(){ float ang = aSeed.x*6.2831 + uTime*0.35; float r = 0.99 + aSeed.y*0.22;",
-    "  float y = 1.5 - mod(uTime*(0.9+aSeed.z*1.4) + aSeed.w*4.0, 3.4);",
-    "  float fade = smoothstep(-1.9,-1.4,y) * smoothstep(1.5,1.1,y);",
-    "  vec4 w = uModel*vec4(cos(ang)*r, y, sin(ang)*r, 1.0); vec4 mv = uView*w;",
-    "  gl_Position = uProj*mv; gl_PointSize = (3.0 + aSeed.z*5.0) * uPx * (5.5 / -mv.z); vA = fade*uWash; }"
+    "vec2 se(float a){ float c=cos(a), s=sin(a); return vec2(sign(c)*pow(abs(c),0.4348), sign(s)*pow(abs(s),0.4348)); }",
+    "void main(){ float a = aSeed.x*6.2831; float mist = step(0.82, aSeed.w);",
+    "  float t = fract(uTime*(0.5+aSeed.z*0.5) + aSeed.y*7.0);",
+    "  float y = 1.06 - 2.36*t*t; float h = (y+1.3)/2.4; float sc = 0.76 + 0.24*h;",
+    "  vec2 q = se(a) * vec2(1.0, 1.08) * sc * (1.0 + 0.03 + mist*0.3);",
+    "  float sp = smoothstep(0.93, 1.0, t); q *= 1.0 + sp*0.7; y = max(y, -1.3);",
+    "  vec4 w = uModel*vec4(q.x, y, q.y, 1.0); vec4 mv = uView*w; gl_Position = uProj*mv;",
+    "  float size = mix(2.2 + aSeed.z*3.4, 8.0 + aSeed.z*10.0, mist);",
+    "  gl_PointSize = size * uPx * (5.5 / -mv.z);",
+    "  vA = uWash * (1.0 - sp*0.8) * smoothstep(0.0, 0.06, t) * mix(1.0, 0.18, mist); }"
   ].join("\n");
-  var PFS = [
-    "precision mediump float; varying float vA;",
+  var PFS = PREC + [
+    "varying float vA;",
     "void main(){ vec2 c = gl_PointCoord - 0.5; float d = dot(c,c); if (d > 0.25) discard;",
-    "  float a = (1.0 - smoothstep(0.08, 0.25, d)) * vA * 0.85; gl_FragColor = vec4(vec3(0.75,0.98,0.95)*a, a); }"
+    "  float a = (1.0 - smoothstep(0.05, 0.25, d)) * vA * 0.8; gl_FragColor = vec4(vec3(0.85,0.97,0.96)*a, a); }"
   ].join("\n");
+  var SVS = "attribute vec3 aPos; attribute vec2 aUV; uniform mat4 uProj, uView, uModel; varying vec2 vUV; void main(){ vUV = aUV; gl_Position = uProj*uView*uModel*vec4(aPos,1.0); }";
+  var SFS = PREC + "varying vec2 vUV; uniform float uAlpha; void main(){ vec2 p = (vUV-0.5)*2.0; float d = pow(pow(abs(p.x),3.0)+pow(abs(p.y),3.0),1.0/3.0); float a = (1.0 - smoothstep(0.3, 1.0, d)) * uAlpha; gl_FragColor = vec4(0.0,0.0,0.0,a); }";
+
   function prog(vs, fs) {
     function sh(t, s) { var o = gl.createShader(t); gl.shaderSource(o, s); gl.compileShader(o); if (!gl.getShaderParameter(o, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(o)); return o; }
     var p = gl.createProgram(); gl.attachShader(p, sh(gl.VERTEX_SHADER, vs)); gl.attachShader(p, sh(gl.FRAGMENT_SHADER, fs)); gl.linkProgram(p);
@@ -634,83 +692,148 @@ document.documentElement.classList.add("js");
     for (i = 0; i < n; i++) { var an = gl.getActiveAttrib(p, i).name; a[an] = gl.getAttribLocation(p, an); }
     return { p: p, u: u, a: a };
   }
-  var P, PP;
-  try { P = prog(VS, FS); PP = prog(PVS, PFS); } catch (e) { canvas.remove(); return; }
+  var P, PP, SP;
+  try { P = prog(VS, FS); PP = prog(PVS, PFS); SP = prog(SVS, SFS); } catch (e) { canvas.remove(); return; }
 
-  /* Lathe geometry with analytic normals. profile: [[r, y, ribbed], ...] bottom to top. */
-  function lathe(profile, seg, ribs) {
-    var pos = [], nrm = [], uv = [], idx = [], rows = profile.length, i, j;
-    function radius(i, a) { var p = profile[i], r = p[0]; if (p[2] && ribs) r *= 1 + 0.036 * Math.pow(Math.max(0, Math.cos(a * 14)), 2); return r; }
-    for (i = 0; i < rows; i++) {
-      for (j = 0; j <= seg; j++) {
-        var a = j / seg * Math.PI * 2, r = radius(i, a), y = profile[i][1];
-        var x = Math.cos(a) * r, z = Math.sin(a) * r;
-        pos.push(x, y, z); uv.push(j / seg, i / (rows - 1));
-        // tangent along the profile (next/prev row), tangent around (angle), normal = cross
-        var i0 = Math.max(0, i - 1), i1 = Math.min(rows - 1, i + 1);
-        var r0 = radius(i0, a), r1 = radius(i1, a);
-        var ty = [Math.cos(a) * (r1 - r0), profile[i1][1] - profile[i0][1], Math.sin(a) * (r1 - r0)];
-        var da = 0.01, ra = radius(i, a + da);
-        var ta = [Math.cos(a + da) * ra - x, 0, Math.sin(a + da) * ra - z];
-        var n = [ty[1] * ta[2] - ty[2] * ta[1], ty[2] * ta[0] - ty[0] * ta[2], ty[0] * ta[1] - ty[1] * ta[0]];
-        var l = Math.hypot(n[0], n[1], n[2]) || 1; nrm.push(n[0] / l, n[1] / l, n[2] / l);
-      }
+  /* Tiling noise texture: R blotches, G fine grain, B vertical streaks, A cells. */
+  (function () {
+    var S = 256, data = new Uint8Array(S * S * 4);
+    function hsh(i, j, seed) { var n = Math.imul(i, 374761393) ^ Math.imul(j, 668265263) ^ Math.imul(seed, 1013904223); n = Math.imul(n ^ (n >>> 13), 1274126177); n ^= n >>> 16; return (n >>> 0) / 4294967295; }
+    function vn(x, y, cx, cy, seed) {
+      var xi = Math.floor(x * cx), yi = Math.floor(y * cy), xf = x * cx - xi, yf = y * cy - yi;
+      var sx = xf * xf * (3 - 2 * xf), sy = yf * yf * (3 - 2 * yf);
+      function h(i, j) { return hsh(((i % cx) + cx) % cx, ((j % cy) + cy) % cy, seed); }
+      var a = h(xi, yi) + (h(xi + 1, yi) - h(xi, yi)) * sx, b = h(xi, yi + 1) + (h(xi + 1, yi + 1) - h(xi, yi + 1)) * sx;
+      return a + (b - a) * sy;
     }
-    for (i = 0; i < rows - 1; i++) for (j = 0; j < seg; j++) {
-      var a0 = i * (seg + 1) + j, b0 = a0 + seg + 1;
-      idx.push(a0, b0, a0 + 1, a0 + 1, b0, b0 + 1);
+    function fbm(x, y, cx, cy, oct, seed) { var s = 0, amp = 1, sum = 0, o; for (o = 0; o < oct; o++) { s += amp * vn(x, y, cx, cy, seed + o * 11); sum += amp; amp *= 0.5; cx *= 2; cy *= 2; } return s / sum; }
+    var x, y, k = 0;
+    for (y = 0; y < S; y++) for (x = 0; x < S; x++) {
+      var fx = x / S, fy = y / S;
+      data[k++] = fbm(fx, fy, 4, 4, 4, 1) * 255;
+      data[k++] = fbm(fx, fy, 32, 32, 3, 2) * 255;
+      data[k++] = fbm(fx, fy, 48, 3, 3, 3) * 255;
+      data[k++] = fbm(fx, fy, 9, 9, 2, 4) * 255;
+    }
+    var tex = gl.createTexture(); gl.bindTexture(gl.TEXTURE_2D, tex);
+    gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, S, S, 0, gl.RGBA, gl.UNSIGNED_BYTE, data);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.REPEAT); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.REPEAT);
+    gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_LINEAR); gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+    gl.generateMipmap(gl.TEXTURE_2D);
+  })();
+
+  /* Geometry: every part is a swept surface p = fn(u, v); normals come from the surface derivatives. */
+  function sweep(fn, segU, segV) {
+    var pos = [], nrm = [], uv = [], idx = [], i, j, eu = 0.25 / segU, ev = 0.25 / segV;
+    for (i = 0; i <= segV; i++) for (j = 0; j <= segU; j++) {
+      var u = j / segU, v = i / segV, p = fn(u, v);
+      var a = fn(u + eu, v), b = fn(u - eu, v), c = fn(u, Math.min(1, v + ev)), d = fn(u, Math.max(0, v - ev));
+      var tu = [a[0] - b[0], a[1] - b[1], a[2] - b[2]], tv = [c[0] - d[0], c[1] - d[1], c[2] - d[2]];
+      var n = [tv[1] * tu[2] - tv[2] * tu[1], tv[2] * tu[0] - tv[0] * tu[2], tv[0] * tu[1] - tv[1] * tu[0]];
+      var l = Math.hypot(n[0], n[1], n[2]) || 1;
+      pos.push(p[0], p[1], p[2]); nrm.push(n[0] / l, n[1] / l, n[2] / l); uv.push(u, v);
+    }
+    // orient outward: compare normals with the direction from the centroid
+    var cx = 0, cy = 0, cz = 0, cnt = pos.length / 3, dots = 0;
+    for (i = 0; i < cnt; i++) { cx += pos[i * 3]; cy += pos[i * 3 + 1]; cz += pos[i * 3 + 2]; }
+    cx /= cnt; cy /= cnt; cz /= cnt;
+    for (i = 0; i < cnt; i++) dots += (pos[i * 3] - cx) * nrm[i * 3] + (pos[i * 3 + 1] - cy) * nrm[i * 3 + 1] + (pos[i * 3 + 2] - cz) * nrm[i * 3 + 2];
+    var flip = dots < 0;
+    if (flip) for (i = 0; i < nrm.length; i++) nrm[i] = -nrm[i];
+    for (i = 0; i < segV; i++) for (j = 0; j < segU; j++) {
+      var a0 = i * (segU + 1) + j, b0 = a0 + segU + 1;
+      if (flip) idx.push(a0, a0 + 1, b0, a0 + 1, b0 + 1, b0); else idx.push(a0, b0, a0 + 1, a0 + 1, b0, b0 + 1);
     }
     return { pos: pos, nrm: nrm, uv: uv, idx: idx };
   }
   function mesh(g) {
     var vb = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, vb);
     var inter = new Float32Array(g.pos.length / 3 * 8), k;
-    for (k = 0; k < g.pos.length / 3; k++) { inter.set([g.pos[k*3], g.pos[k*3+1], g.pos[k*3+2], g.nrm[k*3], g.nrm[k*3+1], g.nrm[k*3+2], g.uv[k*2], g.uv[k*2+1]], k * 8); }
+    for (k = 0; k < g.pos.length / 3; k++) inter.set([g.pos[k*3], g.pos[k*3+1], g.pos[k*3+2], g.nrm[k*3], g.nrm[k*3+1], g.nrm[k*3+2], g.uv[k*2], g.uv[k*2+1]], k * 8);
     gl.bufferData(gl.ARRAY_BUFFER, inter, gl.STATIC_DRAW);
     var ib = gl.createBuffer(); gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, ib); gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(g.idx), gl.STATIC_DRAW);
     return { vb: vb, ib: ib, n: g.idx.length };
   }
-  // The can: flat base, tapered ribbed body, rim lip, domed lid.
-  var can = mesh(lathe([
-    [0, -1.3, 0], [0.74, -1.3, 0], [0.8, -1.22, 0], [0.8, -1.1, 1], [0.86, -0.6, 1], [0.92, 0.0, 1], [0.97, 0.6, 1], [1.0, 0.92, 1],
-    [1.0, 0.96, 0], [1.1, 0.98, 0], [1.1, 1.18, 0], [1.04, 1.22, 0], [1.0, 1.26, 0], [0.86, 1.34, 0], [0.55, 1.4, 0], [0.2, 1.42, 0], [0, 1.42, 0]
-  ], 72, true));
-  var wheel = mesh(lathe([[0, -0.1, 0], [0.26, -0.1, 0], [0.3, -0.06, 0], [0.3, 0.06, 0], [0.26, 0.1, 0], [0, 0.1, 0]], 32, false));
-  var bar = mesh(lathe([[0, -1.0, 0], [0.06, -1.0, 0], [0.06, 1.0, 0], [0, 1.0, 0]], 16, false));
-  var shadow = (function () { // a flat disc; the shader's fresnel/light terms are irrelevant, we darken via uColor & alpha falloff in uv
-    var g = { pos: [], nrm: [], uv: [], idx: [] }, n = 40, i;
-    g.pos.push(0, 0, 0); g.nrm.push(0, 1, 0); g.uv.push(0, 0);
-    for (i = 0; i <= n; i++) { var a = i / n * Math.PI * 2; g.pos.push(Math.cos(a) * 1.5, 0, Math.sin(a) * 1.5); g.nrm.push(0, 1, 0); g.uv.push(1, 0); }
-    for (i = 1; i <= n; i++) g.idx.push(0, i + 1, i);
-    return mesh(g);
-  })();
-  // particles
-  var PN = window.innerWidth < 800 ? 260 : 520, seeds = new Float32Array(PN * 4), q;
+  var SE = 4.6; // superellipse exponent: a rounded rectangle in plan, like a real cart
+  function se(u) { var a = u * Math.PI * 2, c = Math.cos(a), s = Math.sin(a); return [Math.sign(c) * Math.pow(Math.abs(c), 2 / SE), Math.sign(s) * Math.pow(Math.abs(s), 2 / SE)]; }
+  function keyed(keys, v) { // piecewise-linear [v, a, b] keys
+    var i; for (i = 1; i < keys.length; i++) if (v <= keys[i][0] || i === keys.length - 1) { var k0 = keys[i - 1], k1 = keys[i], t = Math.max(0, Math.min(1, (v - k0[0]) / (k1[0] - k0[0]))); return [k0[1] + (k1[1] - k0[1]) * t, k0[2] + (k1[2] - k0[2]) * t]; }
+    return [keys[0][1], keys[0][2]];
+  }
+  var BODY_KEYS = [[0, -1.30, 0.002], [0.03, -1.30, 0.60], [0.05, -1.29, 0.70], [0.07, -1.25, 0.745], [0.09, -1.20, 0.76], [0.84, 0.92, 1.0], [0.87, 0.97, 1.06], [0.93, 1.10, 1.07], [0.96, 1.12, 1.0], [1, 1.12, 0.002]];
+  function bodyFn(u, v) {
+    var k = keyed(BODY_KEYS, v), y = k[0], sc = k[1], q = se(u);
+    if (y > -1.15 && y < 0.9) { // three horizontal strengthening ribs
+      sc += 0.022 * (Math.exp(-Math.pow((y + 0.95) / 0.05, 2)) + Math.exp(-Math.pow((y + 0.6) / 0.05, 2)) + Math.exp(-Math.pow((y + 0.25) / 0.05, 2)));
+    }
+    return [q[0] * sc, y, q[1] * 1.08 * sc];
+  }
+  function lidFn(u, v) {
+    var q = se(u), y, sc;
+    if (v < 0.12) { y = 1.03 + (v / 0.12) * 0.17; sc = 1.12; }
+    else { var t = (v - 0.12) / 0.88, ph = t * Math.PI / 2, p = 2.8;
+      sc = Math.max(0.002, 1.12 * Math.pow(Math.cos(ph), 2 / p)); y = 1.20 + 0.21 * Math.pow(Math.sin(ph), 2 / p);
+      var x = q[0] * sc, ridge = 0, i; for (i = -2; i <= 2; i++) ridge += Math.exp(-Math.pow((x - i * 0.33) / 0.045, 2));
+      y += 0.012 * ridge * Math.min(1, Math.max(0, (Math.sin(ph) - 0.55) / 0.3)); }
+    return [q[0] * sc, y, q[1] * 1.08 * sc];
+  }
+  var WHEEL_KEYS = [[0, 0.002, -0.07], [0.12, 0.14, -0.075], [0.2, 0.25, -0.08], [0.32, 0.36, -0.06], [0.5, 0.36, 0.0], [0.68, 0.36, 0.06], [0.8, 0.25, 0.085], [0.88, 0.2, 0.035], [0.95, 0.1, 0.07], [1, 0.002, 0.08]];
+  function wheelFn(u, v) {
+    var k = keyed(WHEEL_KEYS, v), r = k[0], w = k[1], a = u * Math.PI * 2;
+    if (v > 0.33 && v < 0.67) { var tr = Math.abs(((u * 20 + 0.5) % 1) - 0.5); r += 0.014 * Math.min(1, Math.max(0, (tr - 0.10) / 0.06)); }
+    return [w, r * Math.cos(a), r * Math.sin(a)];
+  }
+  var CYL_KEYS = [[0, -0.5, 0.002], [0.08, -0.5, 1], [0.92, 0.5, 1], [1, 0.5, 0.002]];
+  function cylFn(u, v) { var k = keyed(CYL_KEYS, v), a = u * Math.PI * 2; return [Math.cos(a) * k[1], k[0], Math.sin(a) * k[1]]; }
+  var body = mesh(sweep(bodyFn, 96, 72)), lidM = mesh(sweep(lidFn, 96, 40)), wheel = mesh(sweep(wheelFn, 64, 40)), cyl = mesh(sweep(cylFn, 24, 6));
+  var quad = (function () { var b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b); gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,0,-1, 0,0, 1,0,-1, 1,0, -1,0,1, 0,1, 1,0,1, 1,1]), gl.STATIC_DRAW); return b; })();
+  var PN = window.innerWidth < 800 ? 420 : 900, seeds = new Float32Array(PN * 4), q;
   for (q = 0; q < PN * 4; q++) seeds[q] = Math.random();
   var pb = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, pb); gl.bufferData(gl.ARRAY_BUFFER, seeds, gl.STATIC_DRAW);
 
-  /* Tiny matrix helpers (column-major) */
+  /* Matrix helpers (column-major) */
   function m4() { return new Float32Array([1,0,0,0, 0,1,0,0, 0,0,1,0, 0,0,0,1]); }
   function mul(a, b) { var o = new Float32Array(16), i, j, k; for (i = 0; i < 4; i++) for (j = 0; j < 4; j++) { var s = 0; for (k = 0; k < 4; k++) s += a[k*4+j] * b[i*4+k]; o[i*4+j] = s; } return o; }
   function T(x, y, z) { var m = m4(); m[12] = x; m[13] = y; m[14] = z; return m; }
-  function S(s) { var m = m4(); m[0] = m[5] = m[10] = s; return m; }
+  function S(x, y, z) { var m = m4(); m[0] = x; m[5] = y === undefined ? x : y; m[10] = z === undefined ? x : z; return m; }
   function RX(a) { var m = m4(), c = Math.cos(a), s = Math.sin(a); m[5] = c; m[6] = s; m[9] = -s; m[10] = c; return m; }
   function RY(a) { var m = m4(), c = Math.cos(a), s = Math.sin(a); m[0] = c; m[2] = -s; m[8] = s; m[10] = c; return m; }
   function RZ(a) { var m = m4(), c = Math.cos(a), s = Math.sin(a); m[0] = c; m[1] = s; m[4] = -s; m[5] = c; return m; }
   function persp(fov, asp, n, f) { var t = 1 / Math.tan(fov / 2), m = new Float32Array(16); m[0] = t / asp; m[5] = t; m[10] = (f + n) / (n - f); m[11] = -1; m[14] = 2 * f * n / (n - f); return m; }
-  function nrm3(m) { // upper-left 3x3 of a rotation*uniform-scale matrix is fine as the normal matrix after normalisation
-    return new Float32Array([m[0], m[1], m[2], m[4], m[5], m[6], m[8], m[9], m[10]]);
+  function lookAt(eye, at) {
+    var zx = eye[0]-at[0], zy = eye[1]-at[1], zz = eye[2]-at[2], l = Math.hypot(zx,zy,zz); zx/=l; zy/=l; zz/=l;
+    var xx = zz, xy = 0, xz = -zx; l = Math.hypot(xx,xy,xz); xx/=l; xz/=l;             // x = up × z, up = +y
+    var yx = zy*xz - zz*xy, yy = zz*xx - zx*xz, yz = zx*xy - zy*xx;
+    var m = m4(); m[0]=xx; m[4]=xy; m[8]=xz; m[1]=yx; m[5]=yy; m[9]=yz; m[2]=zx; m[6]=zy; m[10]=zz;
+    m[12] = -(xx*eye[0]+xy*eye[1]+xz*eye[2]); m[13] = -(yx*eye[0]+yy*eye[1]+yz*eye[2]); m[14] = -(zx*eye[0]+zy*eye[1]+zz*eye[2]); return m;
+  }
+  function nmat(m) { // inverse-transpose of the upper 3x3, so non-uniform scales keep correct normals
+    var a=m[0],b=m[1],c=m[2], d=m[4],e=m[5],f=m[6], g=m[8],h=m[9],i=m[10];
+    var C00=e*i-h*f, C01=h*c-b*i, C02=b*f-e*c, C10=g*f-d*i, C11=a*i-g*c, C12=d*c-a*f, C20=d*h-g*e, C21=g*b-a*h, C22=a*e-d*b;
+    var det = a*C00 + d*C01 + g*C02 || 1e-6;
+    return new Float32Array([C00/det, C10/det, C20/det, C01/det, C11/det, C21/det, C02/det, C12/det, C22/det]);
+  }
+  function between(p0, p1) { // model matrix placing a unit y-cylinder (length 1) from p0 to p1
+    var dx = p1[0]-p0[0], dy = p1[1]-p0[1], dz = p1[2]-p0[2], L = Math.hypot(dx,dy,dz); dx/=L; dy/=L; dz/=L;
+    var ax = Math.abs(dy) < 0.99 ? [0,1,0] : [1,0,0];
+    var xx = dy*ax[2]-dz*ax[1], xy = dz*ax[0]-dx*ax[2], xz = dx*ax[1]-dy*ax[0], l = Math.hypot(xx,xy,xz); xx/=l; xy/=l; xz/=l;
+    var zx = xy*dz-xz*dy, zy = xz*dx-xx*dz, zz = xx*dy-xy*dx;
+    var m = m4(); m[0]=xx; m[1]=xy; m[2]=xz; m[4]=dx*L; m[5]=dy*L; m[6]=dz*L; m[8]=zx; m[9]=zy; m[10]=zz; m[12]=(p0[0]+p1[0])/2; m[13]=(p0[1]+p1[1])/2; m[14]=(p0[2]+p1[2])/2; return m;
   }
 
   /* Scene state: targets come from scroll, current values chase them (interruptible, velocity-continuous). */
-  var cam = [0, 0.15, 6.6];
-  var view = T(-cam[0], -cam[1], -cam[2]);
+  var cam = [0, 0.95, 6.8], look = [0, -0.12, 0];
+  var view = lookAt(cam, look);
   var cur = { x: 0, y: 0, s: 1, rx: 0, clean: 0, wash: 0, a: 0, cream: 0, tilt: 0 };
   var tgt = { x: 0, y: 0, s: 1, rx: 0, clean: 0, wash: 0, a: 1, cream: 0, tilt: 0 };
-  var spin = 0, lastY = window.scrollY, vel = 0, mx = 0, my = 0, smx = 0, smy = 0;
+  var spin = 0.6, lastY = window.scrollY, vel = 0, mx = 0, my = 0, smx = 0, smy = 0;
   var narrow = function () { return window.innerWidth < 900; };
-  var heroArt = document.querySelector(".hero-art"), halfH = cam[2] * Math.tan(35 * Math.PI / 360);
-  function centerScene() { // section whose box contains the viewport's centre line
+  var heroArt = document.querySelector(".hero-art"), capArt = $("art-captured"), closeArt = $("art-closer"), halfH = cam[2] * Math.tan(35 * Math.PI / 360);
+  function anchor(el) { // world x/y (on the z=0 plane) of an element's centre, so the cart can sit in the page flow
+    var r = el.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+    return { x: ((cx / window.innerWidth) - 0.5) * 2 * halfH * (W / H), y: look[1] - ((cy / vh()) - 0.5) * 2 * halfH };
+  }
+  function centerScene() {
     var c = window.scrollY + vh() * 0.5, i, s;
     for (i = 0; i < sections.length; i++) { s = sections[i]; if (c >= s.offsetTop && c < s.offsetTop + s.offsetHeight) return s.dataset.scene; }
     return c < sections[0].offsetTop ? "hero" : "closer";
@@ -719,25 +842,22 @@ document.documentElement.classList.add("js");
     var sc = centerScene(), n = narrow();
     tgt.cream = 0; tgt.wash = 0; tgt.a = 1; tgt.tilt = 0;
     if (sc === "hero") {
-      tgt.x = n ? 0 : 1.75; tgt.y = -0.1; tgt.s = n ? 0.56 : 0.8; tgt.rx = 0.06; tgt.clean = 0;
-      if (n) { // on a phone the can sits in the page flow, in the space under the headline, and scrolls with it
-        var r = heroArt.getBoundingClientRect(), cy = r.top + r.height / 2;
-        tgt.y = -((cy / vh()) - 0.5) * 2 * halfH + cam[1];
-      }
+      tgt.x = n ? 0 : 1.75; tgt.y = -0.1; tgt.s = n ? 0.56 : 0.8; tgt.rx = 0.0; tgt.clean = 0;
+      if (n) { tgt.y = anchor(heroArt).y; }
     }
     else if (sc === "wash") {
-      tgt.x = n ? 0 : 1.6; tgt.y = n ? 0.3 : 0.0; tgt.s = n ? 0.48 : 0.86; tgt.rx = 0.1; tgt.tilt = n ? 0 : 0.08;
+      tgt.x = n ? 0 : 1.6; tgt.y = n ? 0.3 : 0.0; tgt.s = n ? 0.48 : 0.86; tgt.rx = 0.04; tgt.tilt = n ? 0 : 0.05;
       var u = washU; tgt.wash = Math.min(1, Math.max(0, (u - 0.3) * 6)) * Math.min(1, Math.max(0, (0.98 - u) * 8));
       var c = Math.max(0, Math.min(1, (u - 0.36) / 0.52)); tgt.clean = c * c * (3 - 2 * c);
     }
-    else if (sc === "captured") { tgt.x = n ? 1.2 : 2.35; tgt.y = n ? -1.5 : 1.0; tgt.s = n ? 0.4 : 0.46; tgt.rx = -0.05; tgt.clean = 1; tgt.cream = 1; if (n) tgt.a = 0; }
+    else if (sc === "captured") { var p = anchor(capArt); tgt.x = p.x; tgt.y = p.y; tgt.s = n ? 0.42 : 0.5; tgt.rx = 0.0; tgt.clean = 1; tgt.cream = 1; }
     else if (sc === "off") { tgt.x = n ? 2.2 : 3.6; tgt.y = -0.6; tgt.s = 0.5; tgt.clean = 1; tgt.a = 0; tgt.cream = document.body.dataset.bg === "cream" ? 1 : 0; }
-    else { tgt.x = n ? 0.75 : 2.0; tgt.y = n ? -1.45 : -0.15; tgt.s = n ? 0.46 : 0.8; tgt.rx = 0.04; tgt.clean = 1; }
+    else { tgt.x = 2.0; tgt.y = -0.15; tgt.s = n ? 0.5 : 0.8; tgt.rx = 0.0; tgt.clean = 1; if (n) { var c2 = anchor(closeArt); tgt.x = c2.x; tgt.y = c2.y; } }
   }
   if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
     window.addEventListener("pointermove", function (e) { mx = e.clientX / window.innerWidth - 0.5; my = e.clientY / vh() - 0.5; }, { passive: true });
   }
-  var DPR = Math.min(window.devicePixelRatio || 1, 1.75), W = 0, H = 0, projM;
+  var DPR = Math.min(window.devicePixelRatio || 1, window.innerWidth < 800 ? 1.5 : 1.75), W = 0, H = 0, projM;
   function resize() {
     W = Math.floor(window.innerWidth * DPR); H = Math.floor(vh() * DPR);
     if (canvas.width !== W || canvas.height !== H) { canvas.width = W; canvas.height = H; }
@@ -745,13 +865,18 @@ document.documentElement.classList.add("js");
   }
   window.addEventListener("resize", resize); resize();
 
-  function drawMesh(m, model, color, grime, alpha) {
-    gl.uniformMatrix4fv(P.u.uModel, false, model); gl.uniformMatrix3fv(P.u.uNrm, false, nrm3(model));
-    gl.uniform3fv(P.u.uColor, color); gl.uniform1f(P.u.uGrime, grime); gl.uniform1f(P.u.uAlpha, alpha);
+  function drawMesh(m, model, color, part, grime, rough, metal, alpha) {
+    gl.uniformMatrix4fv(P.u.uModel, false, model); gl.uniformMatrix3fv(P.u.uNrm, false, nmat(model));
+    gl.uniform3fv(P.u.uColor, color); gl.uniform1f(P.u.uPart, part); gl.uniform1f(P.u.uGrime, grime); gl.uniform1f(P.u.uRough, rough); gl.uniform1f(P.u.uMetal, metal); gl.uniform1f(P.u.uAlpha, alpha);
     gl.bindBuffer(gl.ARRAY_BUFFER, m.vb);
     gl.vertexAttribPointer(P.a.aPos, 3, gl.FLOAT, false, 32, 0); gl.vertexAttribPointer(P.a.aNrm, 3, gl.FLOAT, false, 32, 12); gl.vertexAttribPointer(P.a.aUV, 2, gl.FLOAT, false, 32, 24);
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, m.ib); gl.drawElements(gl.TRIANGLES, m.n, gl.UNSIGNED_SHORT, 0);
   }
+  function drawShadow(model, alpha) {
+    gl.uniformMatrix4fv(SP.u.uModel, false, model); gl.uniform1f(SP.u.uAlpha, alpha);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+  }
+  var PAINT = [0.105, 0.118, 0.128], RUBBER = [0.018, 0.018, 0.018], HUB = [0.05, 0.055, 0.06], STEEL = [0.50, 0.51, 0.53], ZINC = [0.56, 0.57, 0.58];
   var t0 = performance.now(), last = t0, hidden = false;
   document.addEventListener("visibilitychange", function () { hidden = document.hidden; if (!hidden) { last = performance.now(); requestAnimationFrame(frame); } });
   function frame(now) {
@@ -762,38 +887,52 @@ document.documentElement.classList.add("js");
     var k = 1 - Math.exp(-dt * 5.5), key;
     for (key in tgt) cur[key] += (tgt[key] - cur[key]) * k;
     var sy = window.scrollY; vel += ((sy - lastY) / Math.max(dt, 0.008) - vel) * 0.2; lastY = sy;
-    spin += dt * (still ? 0 : 0.28) + (still ? 0 : vel * dt * 0.0011);
+    spin += dt * (still ? 0 : 0.22) + (still ? 0 : vel * dt * 0.0011);
     smx += (mx - smx) * k; smy += (my - smy) * k;
-    var bob = still ? 0 : Math.sin(t * 0.9) * 0.04;
+    var bob = still ? 0 : Math.sin(t * 0.9) * 0.03;
 
     gl.viewport(0, 0, W, H); gl.clearColor(0, 0, 0, 0); gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     if (cur.a < 0.01) { requestAnimationFrame(frame); return; }
     gl.enable(gl.DEPTH_TEST); gl.enable(gl.BLEND); gl.blendFunc(gl.ONE, gl.ONE_MINUS_SRC_ALPHA); gl.enable(gl.CULL_FACE); gl.cullFace(gl.BACK);
 
-    var base = mul(T(cur.x, cur.y + bob, 0), mul(RX(cur.rx + smy * 0.12 + cur.tilt), mul(RY(spin + smx * 0.5), S(cur.s))));
+    var base = mul(T(cur.x, cur.y + bob, 0), mul(RX(cur.rx + smy * 0.1 + cur.tilt), mul(RY(spin + smx * 0.45), S(cur.s))));
+    var groundY = cur.y - 1.3 * cur.s - 0.005, sh = mul(T(cur.x, groundY, 0), RY(spin + smx * 0.45));
+    // contact shadows first, without depth writes
+    gl.useProgram(SP.p); gl.depthMask(false);
+    gl.uniformMatrix4fv(SP.u.uProj, false, projM); gl.uniformMatrix4fv(SP.u.uView, false, view);
+    gl.bindBuffer(gl.ARRAY_BUFFER, quad); gl.enableVertexAttribArray(SP.a.aPos); gl.enableVertexAttribArray(SP.a.aUV);
+    gl.vertexAttribPointer(SP.a.aPos, 3, gl.FLOAT, false, 20, 0); gl.vertexAttribPointer(SP.a.aUV, 2, gl.FLOAT, false, 20, 12);
+    var shA = cur.a * (0.5 + 0.15 * cur.cream) * (1 - bob * 4);
+    drawShadow(mul(sh, S(1.15 * cur.s, 1, 1.3 * cur.s)), shA);
+    drawShadow(mul(sh, mul(T(0.8 * cur.s, 0, -0.98 * cur.s), S(0.34 * cur.s, 1, 0.42 * cur.s))), shA * 0.9);
+    drawShadow(mul(sh, mul(T(-0.8 * cur.s, 0, -0.98 * cur.s), S(0.34 * cur.s, 1, 0.42 * cur.s))), shA * 0.9);
+    gl.disableVertexAttribArray(SP.a.aPos); gl.disableVertexAttribArray(SP.a.aUV); gl.depthMask(true);
+
     gl.useProgram(P.p);
     gl.enableVertexAttribArray(P.a.aPos); gl.enableVertexAttribArray(P.a.aNrm); gl.enableVertexAttribArray(P.a.aUV);
     gl.uniformMatrix4fv(P.u.uProj, false, projM); gl.uniformMatrix4fv(P.u.uView, false, view);
-    gl.uniform3fv(P.u.uCam, cam); gl.uniform1f(P.u.uClean, cur.clean); gl.uniform1f(P.u.uWash, cur.wash); gl.uniform1f(P.u.uTime, t); gl.uniform1f(P.u.uCream, cur.cream);
-    // ground shadow (sits in the can's local space so it follows it)
-    gl.depthMask(false);
-    drawMesh(shadow, mul(T(cur.x, cur.y + bob - 1.42 * cur.s, 0), mul(RX(0), S(cur.s * 0.9))), [0.0, 0.0, 0.0], 0, cur.a * 0.0);
-    gl.depthMask(true);
-    // can body, wheels, handle
-    var paint = [0.16, 0.19, 0.22];
-    drawMesh(can, base, paint, 1, cur.a);
-    var dark = [0.06, 0.07, 0.08];
-    drawMesh(wheel, mul(base, mul(T(0.62, -1.24, -0.62), RZ(Math.PI / 2))), dark, 0, cur.a);
-    drawMesh(wheel, mul(base, mul(T(-0.62, -1.24, -0.62), RZ(Math.PI / 2))), dark, 0, cur.a);
-    drawMesh(bar, mul(base, mul(T(0, 1.08, -1.0), mul(RZ(Math.PI / 2), S(0.95)))), dark, 0, cur.a);
-    drawMesh(bar, mul(base, mul(T(0.9, 0.98, -0.86), mul(RX(-0.35), S(0.14)))), dark, 0, cur.a);
-    drawMesh(bar, mul(base, mul(T(-0.9, 0.98, -0.86), mul(RX(-0.35), S(0.14)))), dark, 0, cur.a);
+    gl.uniform3fv(P.u.uCam, cam); gl.uniform1f(P.u.uClean, cur.clean); gl.uniform1f(P.u.uWash, cur.wash); gl.uniform1f(P.u.uTime, t); gl.uniform1f(P.u.uCream, cur.cream); gl.uniform1i(P.u.uTex, 0);
+    // body and lid
+    drawMesh(body, base, PAINT, 0, 1, 0.36, 0, cur.a);
+    drawMesh(lidM, base, PAINT, 1, 1, 0.34, 0, cur.a);
+    // wheels and axle (wheel axis is x)
+    drawMesh(wheel, mul(base, T(0.80, -0.94, -0.98)), RUBBER, 2, 0, 0.78, 0, cur.a);
+    drawMesh(wheel, mul(base, mul(T(-0.80, -0.94, -0.98), RY(Math.PI))), RUBBER, 2, 0, 0.78, 0, cur.a);
+    drawMesh(cyl, mul(base, mul(T(0, -0.94, -0.98), mul(RZ(Math.PI / 2), S(0.035, 1.75, 0.035)))), STEEL, 2, 0, 0.35, 1, cur.a);
+    // handle: bar across the back with two brackets down to the rim
+    drawMesh(cyl, mul(base, mul(T(0, 1.27, -1.2), mul(RZ(Math.PI / 2), S(0.045, 2.3, 0.045)))), STEEL, 2, 0, 0.32, 1, cur.a);
+    drawMesh(cyl, mul(base, mul(between([0.8, 0.98, -0.98], [0.8, 1.27, -1.2]), S(0.04, 1, 0.04))), STEEL, 2, 0, 0.32, 1, cur.a);
+    drawMesh(cyl, mul(base, mul(between([-0.8, 0.98, -0.98], [-0.8, 1.27, -1.2]), S(0.04, 1, 0.04))), STEEL, 2, 0, 0.32, 1, cur.a);
+    // lift bar at the front
+    drawMesh(cyl, mul(base, mul(T(0, -0.98, 1.0), mul(RZ(Math.PI / 2), S(0.045, 1.05, 0.045)))), ZINC, 2, 0, 0.45, 1, cur.a);
+    drawMesh(cyl, mul(base, mul(between([0.45, -0.98, 0.78], [0.45, -0.98, 1.0]), S(0.04, 1, 0.04))), ZINC, 2, 0, 0.45, 1, cur.a);
+    drawMesh(cyl, mul(base, mul(between([-0.45, -0.98, 0.78], [-0.45, -0.98, 1.0]), S(0.04, 1, 0.04))), ZINC, 2, 0, 0.45, 1, cur.a);
     gl.disableVertexAttribArray(P.a.aPos); gl.disableVertexAttribArray(P.a.aNrm); gl.disableVertexAttribArray(P.a.aUV);
     // water
     if (cur.wash > 0.01) {
       gl.useProgram(PP.p); gl.depthMask(false); gl.blendFunc(gl.ONE, gl.ONE);
       gl.uniformMatrix4fv(PP.u.uProj, false, projM); gl.uniformMatrix4fv(PP.u.uView, false, view);
-      gl.uniformMatrix4fv(PP.u.uModel, false, mul(T(cur.x, cur.y + bob, 0), S(cur.s)));
+      gl.uniformMatrix4fv(PP.u.uModel, false, mul(T(cur.x, cur.y + bob, 0), mul(RY(spin + smx * 0.45), S(cur.s))));
       gl.uniform1f(PP.u.uTime, t); gl.uniform1f(PP.u.uWash, cur.wash * cur.a); gl.uniform1f(PP.u.uPx, DPR);
       gl.bindBuffer(gl.ARRAY_BUFFER, pb); gl.enableVertexAttribArray(PP.a.aSeed); gl.vertexAttribPointer(PP.a.aSeed, 4, gl.FLOAT, false, 0, 0);
       gl.drawArrays(gl.POINTS, 0, PN); gl.disableVertexAttribArray(PP.a.aSeed); gl.depthMask(true);
