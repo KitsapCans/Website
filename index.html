@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Kitsap Cans · Can cleaning on Bainbridge Island</title>
-<meta name="description" content="Kitsap Cans washes garbage, recycling and yard-waste cans at the curb on Bainbridge Island, right after pickup. Monthly plans from $20 a can.">
+<meta name="description" content="Kitsap Cans washes garbage, recycling and yard-waste cans at the curb on Bainbridge Island, right after pickup. Monthly plans from $30 a can.">
 <meta name="theme-color" content="#0B0F12">
 <meta name="color-scheme" content="dark">
 <meta property="og:title" content="Kitsap Cans · The can you'd rather not touch, washed at the curb.">
@@ -163,8 +163,8 @@ body[data-bg="cream"] .site-header::before { background: rgba(241,236,227,.55); 
 .price-grid { display: grid; gap: 24px; grid-template-areas: "main" "quote" "table"; }
 .price-main { grid-area: main; min-width: 0; } .quote { grid-area: quote; } .table-box { grid-area: table; }
 @media (min-width: 980px) { .price-grid { grid-template-columns: 1.3fr .7fr; grid-template-areas: "main quote" "table quote"; column-gap: 32px; } }
-.seg { position: relative; display: grid; grid-template-columns: repeat(3, 1fr); background: var(--cream-2); border-radius: 999px; padding: 4px; max-width: 540px; }
-.seg .pill { position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc((100% - 8px) / 3); border-radius: 999px; background: var(--ink); transform: translateX(calc(var(--i, 0) * 100%)); transition: transform 280ms var(--ease); }
+.seg { position: relative; display: grid; grid-template-columns: repeat(2, 1fr); background: var(--cream-2); border-radius: 999px; padding: 4px; max-width: 540px; }
+.seg .pill { position: absolute; top: 4px; bottom: 4px; left: 4px; width: calc((100% - 8px) / 2); border-radius: 999px; background: var(--ink); transform: translateX(calc(var(--i, 0) * 100%)); transition: transform 280ms var(--ease); }
 .seg button { position: relative; z-index: 1; min-height: 50px; border: 0; background: transparent; border-radius: 999px; color: var(--fg-dim); font: 600 15px/1.1 var(--display); cursor: pointer; display: grid; place-items: center; gap: 3px; padding: 6px 4px; transition: color 200ms var(--ease); }
 .seg button small { font-weight: 500; font-size: 12px; }
 .seg button[aria-pressed="true"] { color: var(--cream); }
@@ -172,12 +172,11 @@ body[data-bg="cream"] .site-header::before { background: rgba(241,236,227,.55); 
 .builder { margin-top: 20px; background: var(--card); border: 1px solid var(--line); border-radius: 24px; padding: clamp(18px, 3vw, 30px); display: grid; gap: 20px; }
 .builder h3 { font-size: 22px; font-weight: 800; letter-spacing: -0.03em; }
 .builder .hint { color: var(--fg-dim); font-size: 15px; margin-top: 4px; }
-.cans { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 10px; align-items: end; }
-@media (max-width: 620px) { .cans { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.cans { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; align-items: end; max-width: 560px; }
 .cantile { display: grid; gap: 6px; min-width: 0; }
 .can-add { position: relative; display: grid; justify-items: center; align-content: end; gap: 2px; min-height: 100%; padding: 12px 4px; border-radius: 16px; border: 1.5px solid transparent; background: var(--cream-2); color: var(--fg); font: inherit; cursor: pointer; transition: transform 150ms var(--ease), border-color 150ms var(--ease), background-color 150ms var(--ease); }
 .can-add:active { transform: scale(0.97); }
-.can-add svg { width: 100%; max-width: 60px; height: auto; aspect-ratio: 64 / 104; display: block; transition: transform 220ms var(--ease); }
+.can-add svg { width: 100%; max-width: 72px; height: auto; aspect-ratio: 64 / 104; display: block; transition: transform 220ms var(--ease); }
 .cantile.on .can-add { border-color: var(--ink); background: #fff; }
 .can-add .badge { position: absolute; top: 8px; right: 8px; min-width: 26px; height: 26px; padding: 0 7px; border-radius: 999px; background: var(--ink); color: var(--amber); font: 800 14px/26px var(--display); font-variant-numeric: tabular-nums; }
 .can-add .cname { margin-top: 6px; font-weight: 600; font-size: 14px; line-height: 1.2; }
@@ -191,9 +190,6 @@ body[data-bg="cream"] .site-header::before { background: rgba(241,236,227,.55); 
   .can-add:hover svg { transform: translateY(-3px); }
   .can-minus:hover { color: var(--fg); }
 }
-.multi { display: flex; flex-wrap: wrap; gap: 8px; font-size: 14px; color: var(--fg-dim); }
-.multi span { background: var(--cream-2); border-radius: 999px; padding: 7px 12px; }
-.multi b { color: var(--fg); font-weight: 600; }
 .quote { align-self: start; position: sticky; top: 96px; background: var(--ink); color: rgba(241,236,227,.92); border-radius: 24px; padding: clamp(22px, 3vw, 30px); display: grid; gap: 16px; }
 .quote .label { font: 600 12px/1 var(--display); letter-spacing: .16em; text-transform: uppercase; color: var(--amber); }
 .quote .big { font: 800 clamp(52px, 6vw, 72px)/1 var(--display); letter-spacing: -0.045em; font-variant-numeric: tabular-nums; }
@@ -266,12 +262,10 @@ footer { padding: 40px 0 calc(28px + env(safe-area-inset-bottom, 0px)); border-t
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <defs>
     <symbol id="arrow" viewBox="0 0 24 24"><path d="M5 12 h13 M13 6 l6 6 -6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+    <symbol id="can-garbage" viewBox="0 0 64 104"><ellipse cx="32" cy="101" rx="25" ry="2.5" fill="#000" fill-opacity=".18"/><rect x="13" y="24" width="38" height="5" rx="2.5" fill="#2E3940"/><path d="M11 37 H53 L49.5 92 Q49 95 46 95 H18 Q15 95 14.5 92 Z" fill="#46545D"/><path d="M22 42 V89 M32 42 V90 M42 42 V89" stroke="#5B6B75" stroke-width="2.2" stroke-linecap="round"/><path d="M16 41 L18 88" stroke="#FFF" stroke-opacity=".22" stroke-width="2.4" stroke-linecap="round"/><rect x="8" y="28" width="48" height="7" rx="2.5" fill="#2E3940"/><rect x="7" y="33.5" width="50" height="3.5" rx="1.75" fill="#2E3940"/><circle cx="15" cy="95" r="5.5" fill="#1C2429"/><circle cx="49" cy="95" r="5.5" fill="#1C2429"/></symbol>
+    <symbol id="can-recycle" viewBox="0 0 64 104"><ellipse cx="32" cy="101" rx="25" ry="2.5" fill="#000" fill-opacity=".18"/><rect x="13" y="8" width="38" height="5" rx="2.5" fill="#215F8A"/><path d="M11 21 H53 L49.5 92 Q49 95 46 95 H18 Q15 95 14.5 92 Z" fill="#2F7FB5"/><path d="M22 26 V89 M32 26 V90 M42 26 V89" stroke="#4C95C6" stroke-width="2.2" stroke-linecap="round"/><path d="M16 25 L18 88" stroke="#FFF" stroke-opacity=".22" stroke-width="2.4" stroke-linecap="round"/><rect x="8" y="12" width="48" height="7" rx="2.5" fill="#215F8A"/><rect x="7" y="17.5" width="50" height="3.5" rx="1.75" fill="#215F8A"/><circle cx="15" cy="95" r="5.5" fill="#1C2429"/><circle cx="49" cy="95" r="5.5" fill="#1C2429"/></symbol>
+    <symbol id="can-compost" viewBox="0 0 64 104"><ellipse cx="32" cy="101" rx="25" ry="2.5" fill="#000" fill-opacity=".18"/><rect x="13" y="8" width="38" height="5" rx="2.5" fill="#456E29"/><path d="M11 21 H53 L49.5 92 Q49 95 46 95 H18 Q15 95 14.5 92 Z" fill="#5E8F3A"/><path d="M22 26 V89 M32 26 V90 M42 26 V89" stroke="#76A652" stroke-width="2.2" stroke-linecap="round"/><path d="M16 25 L18 88" stroke="#FFF" stroke-opacity=".22" stroke-width="2.4" stroke-linecap="round"/><rect x="8" y="12" width="48" height="7" rx="2.5" fill="#456E29"/><rect x="7" y="17.5" width="50" height="3.5" rx="1.75" fill="#456E29"/><circle cx="15" cy="95" r="5.5" fill="#1C2429"/><circle cx="49" cy="95" r="5.5" fill="#1C2429"/></symbol>
     <symbol id="phone" viewBox="0 0 24 24"><path fill="currentColor" d="M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1A17 17 0 0 1 3 4c0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1z"/></symbol>
-    <symbol id="can-g-small" viewBox="0 0 64 104"><ellipse cx="32" cy="101" rx="25" ry="2.5" fill="#000" fill-opacity=".18"/><rect x="13" y="42" width="38" height="5" rx="2.5" fill="#2E3940"/><path d="M11 55 H53 L49.5 92 Q49 95 46 95 H18 Q15 95 14.5 92 Z" fill="#46545D"/><path d="M22 60 V89 M32 60 V90 M42 60 V89" stroke="#5B6B75" stroke-width="2.2" stroke-linecap="round"/><path d="M16 59 L18 88" stroke="#FFF" stroke-opacity=".22" stroke-width="2.4" stroke-linecap="round"/><rect x="8" y="46" width="48" height="7" rx="2.5" fill="#2E3940"/><rect x="7" y="51.5" width="50" height="3.5" rx="1.75" fill="#2E3940"/><circle cx="15" cy="95" r="5.5" fill="#1C2429"/><circle cx="49" cy="95" r="5.5" fill="#1C2429"/></symbol>
-    <symbol id="can-g-medium" viewBox="0 0 64 104"><ellipse cx="32" cy="101" rx="25" ry="2.5" fill="#000" fill-opacity=".18"/><rect x="13" y="24" width="38" height="5" rx="2.5" fill="#2E3940"/><path d="M11 37 H53 L49.5 92 Q49 95 46 95 H18 Q15 95 14.5 92 Z" fill="#46545D"/><path d="M22 42 V89 M32 42 V90 M42 42 V89" stroke="#5B6B75" stroke-width="2.2" stroke-linecap="round"/><path d="M16 41 L18 88" stroke="#FFF" stroke-opacity=".22" stroke-width="2.4" stroke-linecap="round"/><rect x="8" y="28" width="48" height="7" rx="2.5" fill="#2E3940"/><rect x="7" y="33.5" width="50" height="3.5" rx="1.75" fill="#2E3940"/><circle cx="15" cy="95" r="5.5" fill="#1C2429"/><circle cx="49" cy="95" r="5.5" fill="#1C2429"/></symbol>
-    <symbol id="can-r-large" viewBox="0 0 64 104"><ellipse cx="32" cy="101" rx="25" ry="2.5" fill="#000" fill-opacity=".18"/><rect x="13" y="8" width="38" height="5" rx="2.5" fill="#215F8A"/><path d="M11 21 H53 L49.5 92 Q49 95 46 95 H18 Q15 95 14.5 92 Z" fill="#2F7FB5"/><path d="M22 26 V89 M32 26 V90 M42 26 V89" stroke="#4C95C6" stroke-width="2.2" stroke-linecap="round"/><path d="M16 25 L18 88" stroke="#FFF" stroke-opacity=".22" stroke-width="2.4" stroke-linecap="round"/><rect x="8" y="12" width="48" height="7" rx="2.5" fill="#215F8A"/><rect x="7" y="17.5" width="50" height="3.5" rx="1.75" fill="#215F8A"/><circle cx="15" cy="95" r="5.5" fill="#1C2429"/><circle cx="49" cy="95" r="5.5" fill="#1C2429"/></symbol>
-    <symbol id="can-y-small" viewBox="0 0 64 104"><ellipse cx="32" cy="101" rx="25" ry="2.5" fill="#000" fill-opacity=".18"/><rect x="13" y="42" width="38" height="5" rx="2.5" fill="#456E29"/><path d="M11 55 H53 L49.5 92 Q49 95 46 95 H18 Q15 95 14.5 92 Z" fill="#5E8F3A"/><path d="M22 60 V89 M32 60 V90 M42 60 V89" stroke="#76A652" stroke-width="2.2" stroke-linecap="round"/><path d="M16 59 L18 88" stroke="#FFF" stroke-opacity=".22" stroke-width="2.4" stroke-linecap="round"/><rect x="8" y="46" width="48" height="7" rx="2.5" fill="#456E29"/><rect x="7" y="51.5" width="50" height="3.5" rx="1.75" fill="#456E29"/><circle cx="15" cy="95" r="5.5" fill="#1C2429"/><circle cx="49" cy="95" r="5.5" fill="#1C2429"/></symbol>
-    <symbol id="can-y-large" viewBox="0 0 64 104"><ellipse cx="32" cy="101" rx="25" ry="2.5" fill="#000" fill-opacity=".18"/><rect x="13" y="8" width="38" height="5" rx="2.5" fill="#456E29"/><path d="M11 21 H53 L49.5 92 Q49 95 46 95 H18 Q15 95 14.5 92 Z" fill="#5E8F3A"/><path d="M22 26 V89 M32 26 V90 M42 26 V89" stroke="#76A652" stroke-width="2.2" stroke-linecap="round"/><path d="M16 25 L18 88" stroke="#FFF" stroke-opacity=".22" stroke-width="2.4" stroke-linecap="round"/><rect x="8" y="12" width="48" height="7" rx="2.5" fill="#456E29"/><rect x="7" y="17.5" width="50" height="3.5" rx="1.75" fill="#456E29"/><circle cx="15" cy="95" r="5.5" fill="#1C2429"/><circle cx="49" cy="95" r="5.5" fill="#1C2429"/></symbol>
   </defs>
 </svg>
 
@@ -302,7 +296,7 @@ footer { padding: 40px 0 calc(28px + env(safe-area-inset-bottom, 0px)); border-t
       </div>
       <div class="hero-art" aria-hidden="true"></div>
       <ul class="meta fade" style="--d:560ms">
-        <li><b>From $20</b> a can, monthly</li>
+        <li><b>From $30</b> a can, monthly</li>
         <li><b>No need</b> to be home</li>
         <li><b>Every drop</b> of wash water captured</li>
       </ul>
@@ -315,7 +309,7 @@ footer { padding: 40px 0 calc(28px + env(safe-area-inset-bottom, 0px)); border-t
       <div class="wash-title wrap" style="left:0;right:0"><p class="eyebrow">How it works</p><h2 id="how-title" class="display h-sec" style="margin-top:12px">nothing changes <em>for you.</em></h2></div>
       <div class="wash-body wrap">
         <div class="steps" id="steps">
-          <div class="step on"><span class="n">01</span><span class="tag">Today</span><h3>Pick your cans and a plan.</h3><p>Monthly, quarterly or a one-time clean. Tell us which cans you have and where you live.</p></div>
+          <div class="step on"><span class="n">01</span><span class="tag">Today</span><h3>Pick your cans and a plan.</h3><p>A monthly plan or a one-time clean. Tell us which cans you have and where you live.</p></div>
           <div class="step"><span class="n">02</span><span class="tag">Pickup day, by 6 am</span><h3>Roll them out like always.</h3><p>Your cans go to the curb for Bainbridge Disposal, same as every week. The truck empties them.</p></div>
           <div class="step"><span class="n">03</span><span class="tag">After the truck</span><h3>We wash them right there.</h3><p>Hot pressurized water, a scrub of the lid, walls, bottom and handle, then deodorizer. Left where we found them.</p></div>
         </div>
@@ -350,37 +344,35 @@ footer { padding: 40px 0 calc(28px + env(safe-area-inset-bottom, 0px)); border-t
       <div class="head">
         <p class="eyebrow fade">Pricing</p>
         <h2 id="price-title" class="display h-sec reveal">tap your cans, <em>see</em> your price.</h2>
-        <p class="lede fade">Prices are per can, per visit, and go by size. Monthly plans save the most, and every extra can saves you more.</p>
+        <p class="lede fade">Prices are per can, per visit, and the same for any size can. The monthly plan saves $14 to $15 a can on every visit.</p>
       </div>
       <div class="price-grid">
         <div class="price-main">
           <div class="seg" role="group" aria-label="Choose a plan" id="seg">
             <span class="pill" aria-hidden="true"></span>
-            <button type="button" data-plan="monthly" aria-pressed="true">Monthly<small>save up to 44%</small></button>
-            <button type="button" data-plan="quarterly" aria-pressed="false">Quarterly<small>save up to 22%</small></button>
+            <button type="button" data-plan="monthly" aria-pressed="true">Monthly plan<small>every pickup month</small></button>
             <button type="button" data-plan="once" aria-pressed="false">One-time<small>single visit</small></button>
           </div>
           <div class="builder">
-            <div><h3>Which cans do you have?</h3><p class="hint">Tap a can to add it. Tap again if you have two of the same.</p></div>
+            <div><h3>Which cans do you have?</h3><p class="hint">Tap a can to add it. Tap again if you have two of the same. Any size, same price.</p></div>
             <div class="cans" id="picks"></div>
-            <div class="multi"><span>2nd can <b>10% off</b></span><span>3rd can <b>20% off</b></span><span>4th can <b>25% off</b></span></div>
           </div>
         </div>
         <div class="table-box">
           <table>
             <caption class="sr">Price per can, per visit</caption>
-            <thead><tr><th scope="col">Can size</th><th scope="col" data-col="monthly">Monthly</th><th scope="col" data-col="quarterly">Quarterly</th><th scope="col" data-col="once">One-time</th></tr></thead>
+            <thead><tr><th scope="col">Can</th><th scope="col" data-col="monthly">Monthly plan</th><th scope="col" data-col="once">One-time</th><th scope="col">Monthly saves</th></tr></thead>
             <tbody id="price-rows"></tbody>
           </table>
         </div>
         <aside class="quote" aria-labelledby="quote-title">
           <span class="label" id="quote-title">Your price</span>
-          <div class="big" id="t-visit" aria-live="polite">$43<small> per visit</small></div>
+          <div class="big" id="t-visit" aria-live="polite">$65<small> per visit</small></div>
           <div class="rows">
             <div><span id="t-plan">Monthly plan</span><span id="t-count">2 cans</span></div>
-            <div><span>Compared with one-time</span><span class="save" id="t-save">Save $37</span></div>
+            <div><span id="t-save-label">Compared with one-time</span><span class="save" id="t-save">Save $29</span></div>
           </div>
-          <p class="fine">Your biggest can is always the full-price one. The multi-can discount goes on the rest.</p>
+          <p class="fine">Same price for any size can. No contract; pause or cancel any time.</p>
           <a class="btn btn-amber" id="t-book" href="sms:+12063127948">Text us this quote <svg aria-hidden="true"><use href="#arrow"/></svg></a>
           <p class="fine">Opens a text to (206) 312-7948 with your cans and plan filled in. Or <a href="tel:+12063127948">call us</a>.</p>
         </aside>
@@ -398,7 +390,7 @@ footer { padding: 40px 0 calc(28px + env(safe-area-inset-bottom, 0px)); border-t
         <details><summary>What happens to the dirty water?<span class="pm"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1 V13 M1 7 H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span></summary><p>We catch all of it. Washington rules say mobile washers can't let wash water reach the ground, storm drains or surface water, so we collect it on our rig and take it to an approved disposal site.</p></details>
         <details><summary>How do I pay?<span class="pm"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1 V13 M1 7 H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span></summary><p>You pay per can, per visit. With a card on file we charge it after each visit; otherwise we send you an invoice, due within 10 days.</p></details>
         <details><summary>Can I pause or cancel?<span class="pm"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1 V13 M1 7 H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span></summary><p>Yes, any time. Just let us know at least 48 hours before your next visit. There's no contract.</p></details>
-        <details><summary>Why is monthly so much cheaper?<span class="pm"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1 V13 M1 7 H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span></summary><p>Regular visits keep grime from building up, and they let us plan efficient routes on each street. We pass that on to you, so a monthly clean costs up to 44% less than a one-time clean.</p></details>
+        <details><summary>Why is the monthly plan cheaper?<span class="pm"><svg viewBox="0 0 14 14" aria-hidden="true"><path d="M7 1 V13 M1 7 H13" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg></span></summary><p>Regular visits keep grime from building up, and they let us plan efficient routes on each street. We pass that on to you, so a monthly clean costs $14 to $15 less per can than a one-time clean.</p></details>
       </div>
     </div>
   </section>
@@ -471,22 +463,14 @@ document.documentElement.classList.add("js");
   var dock = $("dock");
   new IntersectionObserver(function (es) { dock.classList.toggle("hide", es[0].isIntersecting); }, { threshold: 0.25 }).observe($("signup"));
 
-  /* ---------- Pricing ---------- */
-  var SIZES = {
-    small: { name: "Small", gal: "20–32 gal", price: { once: 35, quarterly: 27.5, monthly: 20 } },
-    medium: { name: "Medium", gal: "64 gal", price: { once: 40, quarterly: 31.25, monthly: 22.5 } },
-    large: { name: "Large", gal: "96 gal", price: { once: 45, quarterly: 35, monthly: 25 } }
-  };
-  var PLANS = { monthly: "Monthly plan", quarterly: "Quarterly plan", once: "One-time clean" };
-  var ORDER = ["monthly", "quarterly", "once"];
-  var MULTI = [0, 0.10, 0.20, 0.25];
-  var PICKS = [
-    { id: "g-small", name: "Garbage", gal: "20–32 gal", size: "small", n: 1 },
-    { id: "g-medium", name: "Garbage", gal: "64 gal", size: "medium", n: 0 },
-    { id: "r-large", name: "Recycling", gal: "96 gal", size: "large", n: 1 },
-    { id: "y-small", name: "Yard waste", gal: "32 gal", size: "small", n: 0 },
-    { id: "y-large", name: "Yard waste", gal: "96 gal", size: "large", n: 0 }
+  /* ---------- Pricing: the same three services and prices as our Flyra price book ---------- */
+  var CANS = [
+    { id: "garbage", name: "Garbage", sub: "any size", price: { monthly: 35, once: 49 }, n: 1 },
+    { id: "recycle", name: "Recycling", sub: "any size", price: { monthly: 30, once: 45 }, n: 1 },
+    { id: "compost", name: "Compost", sub: "yard & food waste", price: { monthly: 35, once: 49 }, n: 0 }
   ];
+  var PLANS = { monthly: "Monthly plan", once: "One-time clean" };
+  var ORDER = ["monthly", "once"];
   var plan = "monthly";
   var money = function (v) { var r = Math.round(v * 100) / 100; return "$" + (r % 1 ? r.toFixed(2) : String(r)); };
   var pop = function (el, from) {
@@ -494,45 +478,43 @@ document.documentElement.classList.add("js");
     el.animate(still ? [{ opacity: 0.4 }, { opacity: 1 }] : [{ opacity: 0.4, transform: from }, { opacity: 1, transform: "none" }], { duration: 220, easing: "cubic-bezier(0.23, 1, 0.32, 1)" });
   };
   function renderTable() {
-    $("price-rows").innerHTML = ["small", "medium", "large"].map(function (k) {
-      var s = SIZES[k];
-      return "<tr><td>" + s.name + "<small>" + s.gal + "</small></td>" + ORDER.map(function (p) { return '<td class="' + (p === plan ? "on" : "") + '">' + money(s.price[p]) + "</td>"; }).join("") + "</tr>";
+    $("price-rows").innerHTML = CANS.map(function (c) {
+      return "<tr><td>" + c.name + "<small>" + c.sub + "</small></td>" + ORDER.map(function (p) { return '<td class="' + (p === plan ? "on" : "") + '">' + money(c.price[p]) + "</td>"; }).join("") +
+        "<td>" + money(c.price.once - c.price.monthly) + "<small>per visit</small></td></tr>";
     }).join("");
     document.querySelectorAll("thead th[data-col]").forEach(function (th) { th.classList.toggle("on", th.dataset.col === plan); });
   }
   function renderPicks() {
-    $("picks").innerHTML = PICKS.map(function (k) {
-      var label = k.name + " can, " + k.gal;
-      return '<div class="cantile' + (k.n ? " on" : "") + '">' +
-        '<button type="button" class="can-add" data-id="' + k.id + '" data-d="1" aria-label="Add a ' + label + ', ' + k.n + ' added">' +
-        '<svg viewBox="0 0 64 104" aria-hidden="true"><use href="#can-' + k.id + '"/></svg>' + (k.n ? '<span class="badge">' + k.n + "</span>" : "") +
-        '<span class="cname">' + k.name + '</span><span class="cgal">' + k.gal + '</span><span class="cprice">' + money(SIZES[k.size].price[plan]) + "</span></button>" +
-        '<button type="button" class="can-minus" data-id="' + k.id + '" data-d="-1" aria-label="Remove a ' + label + '"' + (k.n ? "" : " disabled") + ">Remove</button></div>";
+    $("picks").innerHTML = CANS.map(function (c) {
+      var label = c.name + " can";
+      return '<div class="cantile' + (c.n ? " on" : "") + '">' +
+        '<button type="button" class="can-add" data-id="' + c.id + '" data-d="1" aria-label="Add a ' + label + ', ' + c.n + ' added">' +
+        '<svg viewBox="0 0 64 104" aria-hidden="true"><use href="#can-' + c.id + '"/></svg>' + (c.n ? '<span class="badge">' + c.n + "</span>" : "") +
+        '<span class="cname">' + c.name + '</span><span class="cgal">' + c.sub + '</span><span class="cprice">' + money(c.price[plan]) + "</span></button>" +
+        '<button type="button" class="can-minus" data-id="' + c.id + '" data-d="-1" aria-label="Remove a ' + label + '"' + (c.n ? "" : " disabled") + ">Remove</button></div>";
     }).join("");
   }
   function quote(animate) {
-    var cans = [];
-    PICKS.forEach(function (k) { for (var i = 0; i < k.n; i++) cans.push(SIZES[k.size].price); });
-    cans.sort(function (a, b) { return b.once - a.once; });
-    var list = 0, visit = 0;
-    cans.forEach(function (c, i) { list += c.once; visit += c[plan] * (1 - MULTI[Math.min(i, MULTI.length - 1)]); });
+    var count = 0, visit = 0, once = 0, monthly = 0;
+    CANS.forEach(function (c) { count += c.n; visit += c.n * c.price[plan]; once += c.n * c.price.once; monthly += c.n * c.price.monthly; });
     $("t-visit").innerHTML = money(visit) + "<small> per visit</small>";
     $("t-plan").textContent = PLANS[plan];
-    $("t-count").textContent = cans.length + (cans.length === 1 ? " can" : " cans");
-    $("t-save").textContent = list > visit ? "Save " + money(list - visit) : "No discount";
-    var lines = PICKS.filter(function (k) { return k.n; }).map(function (k) { return k.n + " x " + k.name.toLowerCase() + " (" + k.gal + ")"; });
+    $("t-count").textContent = count + (count === 1 ? " can" : " cans");
+    if (plan === "monthly") { $("t-save-label").textContent = "Compared with one-time"; $("t-save").textContent = once > visit ? "Save " + money(once - visit) : "Pick a can"; }
+    else { $("t-save-label").textContent = "On the monthly plan"; $("t-save").textContent = count ? money(monthly) + " per visit" : "Pick a can"; }
+    var lines = CANS.filter(function (c) { return c.n; }).map(function (c) { return c.n + " x " + c.name.toLowerCase(); });
     $("t-book").href = "sms:+12063127948?&body=" + encodeURIComponent("Hi Kitsap Cans, I'd like to sign up.\n" + PLANS[plan] + ": " + (lines.length ? lines.join(", ") : "no cans picked yet") + " = " + money(visit) + " per visit.\nMy address is: ");
     if (animate) pop($("t-visit"), "translateY(6px)");
   }
   $("picks").addEventListener("click", function (e) {
     var b = e.target.closest("button[data-id]"); if (!b) return;
-    var k = PICKS.filter(function (x) { return x.id === b.dataset.id; })[0];
-    var before = k.n; k.n = Math.max(0, Math.min(4, k.n + Number(b.dataset.d)));
-    if (k.n === before) return;
+    var c = CANS.filter(function (x) { return x.id === b.dataset.id; })[0];
+    var before = c.n; c.n = Math.max(0, Math.min(3, c.n + Number(b.dataset.d)));
+    if (c.n === before) return;
     renderPicks(); quote(true);
-    var tile = document.querySelector('#picks .can-add[data-id="' + k.id + '"]');
-    if (k.n > before) pop(tile.querySelector(".badge"), "scale(0.85)");
-    var again = document.querySelector('#picks button[data-id="' + k.id + '"][data-d="' + b.dataset.d + '"]');
+    var tile = document.querySelector('#picks .can-add[data-id="' + c.id + '"]');
+    if (c.n > before) pop(tile.querySelector(".badge"), "scale(0.85)");
+    var again = document.querySelector('#picks button[data-id="' + c.id + '"][data-d="' + b.dataset.d + '"]');
     (again && !again.disabled ? again : tile).focus();
   });
   document.querySelectorAll("#seg button").forEach(function (b, i) {
