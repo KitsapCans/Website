@@ -606,8 +606,10 @@ document.documentElement.classList.add("js");
     if (typeof dlg.showModal === "function") { dlg.showModal(); document.body.classList.add("qopen"); }
     else window.open(url, "_blank", "noopener");
   }
-  function closeQuote() { if (dlg.open) dlg.close(); }
-  dlg.addEventListener("close", function () { document.body.classList.remove("qopen"); });
+  function unlock() { document.body.classList.remove("qopen"); }
+  function closeQuote() { if (dlg.open) dlg.close(); unlock(); } // release the scroll lock right away, not only on the async close event
+  dlg.addEventListener("close", unlock);
+  dlg.addEventListener("cancel", unlock); // Esc
   dlg.addEventListener("click", function (e) { if (e.target === dlg) closeQuote(); }); // click on the backdrop
   $("qdlg-close").addEventListener("click", closeQuote);
   document.querySelectorAll("[data-quote]").forEach(function (b) { b.addEventListener("click", openQuote); });
