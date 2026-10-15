@@ -84,7 +84,7 @@ em { font: italic 1.02em/1 var(--serif); letter-spacing: 0; }
 }
 
 /* The 3D canvas is fixed between section backgrounds and section content */
-#gl { position: fixed; inset: 0; z-index: 1; width: 100%; height: 100%; pointer-events: none; }
+#gl { position: fixed; top: 0; left: 0; z-index: 1; width: 100%; height: 100vh; height: 100lvh; pointer-events: none; } /* largest viewport: the phone's URL bar showing/hiding never resizes the canvas */
 header, footer, .dock { position: relative; z-index: 2; }
 main { position: relative; }
 /* Every section paints its own background, so its colour never depends on scroll direction.
@@ -909,37 +909,70 @@ document.documentElement.classList.add("js");
   var spin = 0.6, lastY = window.scrollY, vel = 0, mx = 0, my = 0, smx = 0, smy = 0;
   var narrow = function () { return window.innerWidth < 900; };
   var heroArt = document.querySelector(".hero-art"), capArt = $("art-captured"), closeArt = $("art-closer"), halfH = cam[2] * Math.tan(35 * Math.PI / 360);
+  var cssH = function () { return canvas.clientHeight || vh(); };
   function anchor(el) { // world x/y (on the z=0 plane) of an element's centre, so the cart can sit in the page flow
     var r = el.getBoundingClientRect(), cx = r.left + r.width / 2, cy = r.top + r.height / 2;
-    return { x: ((cx / window.innerWidth) - 0.5) * 2 * halfH * (W / H), y: look[1] - ((cy / vh()) - 0.5) * 2 * halfH };
+    return { x: ((cx / window.innerWidth) - 0.5) * 2 * halfH * (W / H), y: look[1] - ((cy / cssH()) - 0.5) * 2 * halfH };
   }
   function centerScene() {
     var c = window.scrollY + vh() * 0.5, i, s;
     for (i = 0; i < sections.length; i++) { s = sections[i]; if (c >= s.offsetTop && c < s.offsetTop + s.offsetHeight) return s.dataset.scene; }
     return c < sections[0].offsetTop ? "hero" : "closer";
   }
-  function setTargets() {
-    var sc = centerScene(), n = narrow();
-    tgt.cream = 0; tgt.wash = 0; tgt.a = 1; tgt.tilt = 0;
+  // Where the cart wants to be in each scene. Every value is continuous in scroll position, so blending two
+  // scenes across their boundary never makes the target jump.
+  function sceneTargets(sc, n, o) {
+    o.cream = 0; o.wash = 0; o.a = 1; o.tilt = 0; o.rx = 0;
     if (sc === "hero") {
-      tgt.x = n ? 0 : 1.75; tgt.y = -0.1; tgt.s = n ? 0.56 : 0.8; tgt.rx = 0.0; tgt.clean = 0;
-      if (n) { tgt.y = anchor(heroArt).y; }
+      o.x = n ? 0 : 1.75; o.y = -0.1; o.s = n ? 0.56 : 0.8; o.clean = 0;
+      if (n) o.y = anchor(heroArt).y;
+    } else if (sc === "wash") {
+      o.x = n ? 0 : 1.6; o.y = n ? 0.3 : 0.0; o.s = n ? 0.48 : 0.86; o.rx = 0.04; o.tilt = n ? 0 : 0.05;
+      var u = washU; o.wash = Math.min(1, Math.max(0, (u - 0.3) * 6)) * Math.min(1, Math.max(0, (0.98 - u) * 8));
+      var c = Math.max(0, Math.min(1, (u - 0.36) / 0.52)); o.clean = c * c * (3 - 2 * c);
+    } else if (sc === "captured") {
+      var p = anchor(capArt); o.x = p.x; o.y = p.y; o.s = n ? 0.42 : 0.5; o.clean = 1; o.cream = 1;
+    } else if (sc === "off") {
+      o.x = n ? 2.2 : 3.6; o.y = -0.6; o.s = 0.5; o.clean = 1; o.a = 0; o.cream = 1;
+    } else {
+      o.x = 2.0; o.y = -0.15; o.s = n ? 0.5 : 0.8; o.clean = 1;
+      if (n) { var c2 = anchor(closeArt); o.x = c2.x; o.y = c2.y; }
     }
-    else if (sc === "wash") {
-      tgt.x = n ? 0 : 1.6; tgt.y = n ? 0.3 : 0.0; tgt.s = n ? 0.48 : 0.86; tgt.rx = 0.04; tgt.tilt = n ? 0 : 0.05;
-      var u = washU; tgt.wash = Math.min(1, Math.max(0, (u - 0.3) * 6)) * Math.min(1, Math.max(0, (0.98 - u) * 8));
-      var c = Math.max(0, Math.min(1, (u - 0.36) / 0.52)); tgt.clean = c * c * (3 - 2 * c);
+    return o;
+  }
+  var tA = {}, tB = {};
+  function setTargets() {
+    var n = narrow(), c = window.scrollY + vh() * 0.5, Z = vh() * 0.38, i, key;
+    // Near a boundary between two sections, cross-fade the two scenes' targets with a smoothstep.
+    for (i = 0; i < sections.length - 1; i++) {
+      var b = sections[i + 1].offsetTop;
+      if (Math.abs(c - b) < Z) {
+        var t = (c - (b - Z)) / (2 * Z); t = t * t * (3 - 2 * t);
+        sceneTargets(sections[i].dataset.scene, n, tA); sceneTargets(sections[i + 1].dataset.scene, n, tB);
+        for (key in tA) tgt[key] = tA[key] + (tB[key] - tA[key]) * t;
+        return;
+      }
     }
-    else if (sc === "captured") { var p = anchor(capArt); tgt.x = p.x; tgt.y = p.y; tgt.s = n ? 0.42 : 0.5; tgt.rx = 0.0; tgt.clean = 1; tgt.cream = 1; }
-    else if (sc === "off") { tgt.x = n ? 2.2 : 3.6; tgt.y = -0.6; tgt.s = 0.5; tgt.clean = 1; tgt.a = 0; tgt.cream = document.body.dataset.bg === "cream" ? 1 : 0; }
-    else { tgt.x = 2.0; tgt.y = -0.15; tgt.s = n ? 0.5 : 0.8; tgt.rx = 0.0; tgt.clean = 1; if (n) { var c2 = anchor(closeArt); tgt.x = c2.x; tgt.y = c2.y; } }
+    sceneTargets(centerScene(), n, tA);
+    for (key in tA) tgt[key] = tA[key];
+  }
+  // Critically damped springs (no overshoot): position keys are stiff so the cart tracks the page,
+  // look keys are softer. Velocity carries through, so scroll reversals never snap.
+  var OMEGA = { x: 11, y: 11, s: 7, rx: 6, tilt: 6, clean: 8, wash: 6, a: 6, cream: 5 };
+  var vcur = { x: 0, y: 0, s: 0, rx: 0, clean: 0, wash: 0, a: 0, cream: 0, tilt: 0 };
+  function springStep(dt) {
+    for (var key in tgt) {
+      var w = still ? 30 : OMEGA[key], e = cur[key] - tgt[key], v = vcur[key];
+      var ex = Math.exp(-w * dt), tmp = (v + w * e) * dt;
+      cur[key] = tgt[key] + (e + tmp) * ex; vcur[key] = (v - w * tmp) * ex;
+    }
   }
   if (window.matchMedia("(hover: hover) and (pointer: fine)").matches) {
     window.addEventListener("pointermove", function (e) { mx = e.clientX / window.innerWidth - 0.5; my = e.clientY / vh() - 0.5; }, { passive: true });
   }
   var DPR = Math.min(window.devicePixelRatio || 1, window.innerWidth < 800 ? 1.5 : 1.75), W = 0, H = 0, projM;
   function resize() {
-    W = Math.floor(window.innerWidth * DPR); H = Math.floor(vh() * DPR);
+    W = Math.floor((canvas.clientWidth || window.innerWidth) * DPR); H = Math.floor(cssH() * DPR);
     if (canvas.width !== W || canvas.height !== H) { canvas.width = W; canvas.height = H; }
     projM = persp(35 * Math.PI / 180, W / H, 0.1, 40);
   }
@@ -964,10 +997,12 @@ document.documentElement.classList.add("js");
     var dt = Math.min(0.05, (now - last) / 1000); last = now;
     var t = (now - t0) / 1000;
     setTargets();
-    var k = 1 - Math.exp(-dt * 5.5), key;
-    for (key in tgt) cur[key] += (tgt[key] - cur[key]) * k;
-    var sy = window.scrollY; vel += ((sy - lastY) / Math.max(dt, 0.008) - vel) * 0.2; lastY = sy;
-    spin += dt * (still ? 0 : 0.22) + (still ? 0 : vel * dt * 0.0011);
+    var k = 1 - Math.exp(-dt * 5.5);
+    springStep(dt);
+    // scroll speed adds a little spin; heavily smoothed and capped so flicks don't jerk it
+    var sy = window.scrollY, raw = Math.max(-3000, Math.min(3000, (sy - lastY) / Math.max(dt, 0.008))); lastY = sy;
+    vel += (raw - vel) * (1 - Math.exp(-dt * 4));
+    spin += dt * (still ? 0 : 0.22) + (still ? 0 : vel * dt * 0.0007);
     smx += (mx - smx) * k; smy += (my - smy) * k;
     var bob = still ? 0 : Math.sin(t * 0.9) * 0.03;
 
