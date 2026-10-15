@@ -547,7 +547,7 @@ document.documentElement.classList.add("js");
   var ORDER = ["monthly", "quarterly", "once"];
   var pct = function (part, whole) { return Math.round((1 - part / whole) * 100); };
   ["monthly", "quarterly"].forEach(function (p) { $("pct-" + p).textContent = "save up to " + Math.max.apply(null, CANS.map(function (c) { return pct(c.price[p], c.price.once); })) + "%"; });
-  var plan = "monthly", quoteSummary = "";
+  var plan = "monthly", quoteSummary = "", quoteParams = "";
   var money = function (v) { var r = Math.round(v * 100) / 100; return "$" + (r % 1 ? r.toFixed(2) : String(r)); };
   var pop = function (el, from) {
     if (!el || !el.animate) return;
@@ -581,6 +581,14 @@ document.documentElement.classList.add("js");
     else { $("t-save-label").textContent = "On the monthly plan"; $("t-save").textContent = count ? money(monthly) + " per visit (" + pct(monthly, once) + "% off)" : "Pick a can"; }
     var lines = CANS.filter(function (c) { return c.n; }).map(function (c) { return c.n + " x " + c.name.toLowerCase(); });
     quoteSummary = lines.length ? PLANS[plan] + ": " + lines.join(", ") + " = " + money(visit) + " per visit" : "";
+    // Sent to the quote form's hidden fields so the Flyra lead shows the cans, plan and price
+    var priced = CANS.filter(function (c) { return c.n; }).map(function (c) { return c.n + " x " + c.name.toLowerCase() + " (" + money(c.price[plan]) + " each)"; });
+    var saving = plan !== "once" && once > visit ? " Saves " + money(once - visit) + " per visit (" + pct(visit, once) + "%) vs one-time." : "";
+    quoteParams = lines.length ? "?" + [
+      ["quote_details", quoteSummary],
+      ["service_type", PLANS[plan] + ": " + CANS.filter(function (c) { return c.n; }).map(function (c) { return c.name; }).join(", ")],
+      ["notes", "Website quote. " + PLANS[plan] + ": " + priced.join(", ") + ". Total " + money(visit) + " per visit." + saving]
+    ].map(function (p) { return p[0] + "=" + encodeURIComponent(p[1]); }).join("&") : "";
     if (animate) pop($("t-visit"), "translateY(6px)");
   }
   $("picks").addEventListener("click", function (e) {
@@ -607,7 +615,7 @@ document.documentElement.classList.add("js");
   /* ---------- Quote popup ---------- */
   var FORM_URL = "https://app.flyra.io/f/i2kx8q1j", dlg = $("quote-dialog"), qframe = $("qdlg-iframe"), sum = $("qdlg-sum");
   function openQuote() {
-    var url = FORM_URL;
+    var url = FORM_URL + quoteParams;
     if (qframe.getAttribute("src") !== url) qframe.setAttribute("src", url);
     sum.hidden = !quoteSummary; sum.textContent = quoteSummary;
     if (typeof dlg.showModal === "function") { dlg.showModal(); document.body.classList.add("qopen"); }
