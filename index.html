@@ -96,8 +96,18 @@ footer { background: var(--ink); }
 .hero::before, .closer::before { background:
   radial-gradient(42% 50% at 72% 42%, rgba(232,137,58,.5), rgba(232,137,58,0) 70%),
   radial-gradient(30% 35% at 20% 80%, rgba(111,227,212,.14), rgba(111,227,212,0) 70%), var(--ink); }
-.wash::before { background-color: var(--teal);
-  background-image: linear-gradient(rgba(111,227,212,.13) 1px, transparent 1px), linear-gradient(90deg, rgba(111,227,212,.13) 1px, transparent 1px);
+.wash::before { background-color: var(--teal); }
+/* Each wash step gets its own colour: three viewport-sized layers stick with the panel and cross-fade (opacity only).
+   The grid sits on top in .wash::after and scrolls with the page as before. */
+.wash > .wash-tint { position: absolute; inset: 0; z-index: 0; pointer-events: none; }
+.wash-tint > div { position: sticky; top: 0; height: 100vh; height: 100lvh; overflow: hidden; }
+.wash-tint span { position: absolute; inset: 0; opacity: 0; transition: opacity 600ms var(--ease-io); }
+.wash-tint span.on { opacity: 1; }
+.wash-tint span:nth-child(1) { background: var(--teal); }
+.wash-tint span:nth-child(2) { background: #151C42; }
+.wash-tint span:nth-child(3) { background: #3A1D10; }
+.wash::after { content: ""; position: absolute; inset: 0; z-index: 0; pointer-events: none;
+  background-image: linear-gradient(rgba(241,236,227,.1) 1px, transparent 1px), linear-gradient(90deg, rgba(241,236,227,.1) 1px, transparent 1px);
   background-size: 56px 56px; }
 .giant::before, .pricing::before { background: var(--cream); }
 .faq-sec::before { background: var(--ink); }
@@ -119,7 +129,8 @@ body[data-bg="cream"] .site-header::before { background: rgba(241,236,227,.55); 
 .nav-links a:not(.btn) { font-size: 14px; font-weight: 500; color: var(--fg-dim); text-decoration: none; transition: color 150ms var(--ease); }
 .nav-links .btn { min-height: 42px; padding: 0 18px; font-size: 14px; }
 @media (hover: hover) and (pointer: fine) { .nav-links a:not(.btn):hover { color: var(--fg); } }
-@media (max-width: 780px) { .nav-links a:not(.btn) { display: none; } }
+/* Phones: the bottom dock already carries "See my price", so the header keeps just the review link */
+@media (max-width: 780px) { .nav-links a:not(.nav-review) { display: none; } .nav-review { display: inline-flex; align-items: center; min-height: 44px; } }
 .progress { position: absolute; left: 0; bottom: 0; height: 2px; width: 100%; transform-origin: left; transform: scaleX(var(--p, 0)); background: var(--amber); }
 
 /* Hero */
@@ -294,6 +305,7 @@ body.qopen { overflow: hidden; }
   .js .reveal .w > span { transform: none; transition: none; }
   .js .fade { transform: none; transition: opacity 300ms ease; }
   .step { transition: opacity 300ms ease; transform: none; }
+  .wash-tint span { transition-duration: 300ms; }
   .btn, .can-add, .can-add svg, summary .pm, .seg .pill, .dock { transition-property: opacity, background-color, border-color, color; }
   .btn:active, .can-add:active, .can-minus:active { transform: none; }
   .dock.hide { opacity: 0; transform: none; pointer-events: none; }
@@ -334,6 +346,7 @@ body.qopen { overflow: hidden; }
       <a href="#how">How it works</a>
       <a href="#pricing">Pricing</a>
       <a href="#faq">FAQ</a>
+      <a class="nav-review" href="/review">Leave a review</a>
       <a class="btn btn-amber" href="#pricing">See my price</a>
     </nav>
   </div>
@@ -363,6 +376,7 @@ body.qopen { overflow: hidden; }
   </section>
 
   <section class="wash" id="how" data-bg="wash" data-scene="wash" aria-labelledby="how-title">
+    <div class="wash-tint" aria-hidden="true"><div><span class="on"></span><span></span><span></span></div></div>
     <div class="wash-sticky">
       <div class="wash-title wrap" style="left:0;right:0"><p class="eyebrow">How it works</p><h2 id="how-title" class="display h-sec" style="margin-top:12px">nothing changes <em>for you.</em></h2></div>
       <div class="wash-body wrap">
@@ -379,7 +393,7 @@ body.qopen { overflow: hidden; }
   <section class="giant light" id="water" data-bg="cream" data-scene="captured" aria-labelledby="water-title">
     <div class="wrap">
       <p class="eyebrow fade">Where the dirty water goes</p>
-      <h2 id="water-title" class="display h-giant reveal">captured<em>.</em></h2>
+      <h2 id="water-title" class="display h-giant reveal">dirty water captured<em>.</em></h2>
       <div class="giant-grid">
         <div>
           <p class="lede fade">Can water carries food waste and bacteria. We never let it run into a storm drain, a ditch or Puget Sound. Every drop is pulled into the tank on our rig and taken to an approved disposal site.</p>
@@ -426,10 +440,10 @@ body.qopen { overflow: hidden; }
         </div>
         <aside class="quote" aria-labelledby="quote-title">
           <span class="label" id="quote-title">Your price</span>
-          <div class="big" id="t-visit" aria-live="polite">$65<small> per visit</small></div>
+          <div class="big" id="t-visit" aria-live="polite">$0<small> per visit</small></div>
           <div class="rows">
-            <div><span id="t-plan">Monthly plan</span><span id="t-count">2 cans</span></div>
-            <div><span id="t-save-label">Compared with one-time</span><span class="save" id="t-save">Save $29 (31%)</span></div>
+            <div><span id="t-plan">Monthly plan</span><span id="t-count">No cans yet</span></div>
+            <div><span id="t-save-label">Compared with one-time</span><span class="save" id="t-save">Tap a can to start</span></div>
           </div>
           <p class="fine">Same price for any size can. No contract; pause or cancel any time.</p>
           <button type="button" class="btn btn-amber" id="t-book" data-quote>Get this quote <svg aria-hidden="true"><use href="#arrow"/></svg></button>
@@ -539,8 +553,8 @@ document.documentElement.classList.add("js");
 
   /* ---------- Pricing: the same three services and prices as our Flyra price book ---------- */
   var CANS = [
-    { id: "garbage", name: "Garbage", sub: "any size", price: { monthly: 35, quarterly: 44, once: 49 }, n: 1 },
-    { id: "recycle", name: "Recycling", sub: "any size", price: { monthly: 30, quarterly: 40, once: 45 }, n: 1 },
+    { id: "garbage", name: "Garbage", sub: "any size", price: { monthly: 35, quarterly: 44, once: 49 }, n: 0 },
+    { id: "recycle", name: "Recycling", sub: "any size", price: { monthly: 30, quarterly: 40, once: 45 }, n: 0 },
     { id: "compost", name: "Compost", sub: "yard & food waste", price: { monthly: 35, quarterly: 44, once: 49 }, n: 0 }
   ];
   var PLANS = { monthly: "Monthly plan", quarterly: "Quarterly plan", once: "One-time clean" };
@@ -576,9 +590,9 @@ document.documentElement.classList.add("js");
     CANS.forEach(function (c) { count += c.n; visit += c.n * c.price[plan]; once += c.n * c.price.once; monthly += c.n * c.price.monthly; });
     $("t-visit").innerHTML = money(visit) + "<small> per visit</small>";
     $("t-plan").textContent = PLANS[plan];
-    $("t-count").textContent = count + (count === 1 ? " can" : " cans");
-    if (plan !== "once") { $("t-save-label").textContent = "Compared with one-time"; $("t-save").textContent = once > visit ? "Save " + money(once - visit) + " (" + pct(visit, once) + "%)" : "Pick a can"; }
-    else { $("t-save-label").textContent = "On the monthly plan"; $("t-save").textContent = count ? money(monthly) + " per visit (" + pct(monthly, once) + "% off)" : "Pick a can"; }
+    $("t-count").textContent = count ? count + (count === 1 ? " can" : " cans") : "No cans yet";
+    if (plan !== "once") { $("t-save-label").textContent = "Compared with one-time"; $("t-save").textContent = once > visit ? "Save " + money(once - visit) + " (" + pct(visit, once) + "%)" : "Tap a can to start"; }
+    else { $("t-save-label").textContent = "On the monthly plan"; $("t-save").textContent = count ? money(monthly) + " per visit (" + pct(monthly, once) + "% off)" : "Tap a can to start"; }
     var lines = CANS.filter(function (c) { return c.n; }).map(function (c) { return c.n + " x " + c.name.toLowerCase(); });
     quoteSummary = lines.length ? PLANS[plan] + ": " + lines.join(", ") + " = " + money(visit) + " per visit" : "";
     // Sent to the quote form's hidden fields so the Flyra lead shows the cans, plan and price
@@ -630,7 +644,7 @@ document.documentElement.classList.add("js");
   document.querySelectorAll("[data-quote]").forEach(function (b) { b.addEventListener("click", openQuote); });
 
   /* ---------- Scroll choreography: wash steps, header progress ---------- */
-  var wash = $("how"), steps = document.querySelectorAll("#steps .step"), rails = [$("r1"), $("r2"), $("r3")];
+  var wash = $("how"), steps = document.querySelectorAll("#steps .step"), rails = [$("r1"), $("r2"), $("r3")], tints = document.querySelectorAll(".wash-tint span");
   var washU = 0, progress = $("progress");
   function washProgress() {
     var top = wash.offsetTop, h = wash.offsetHeight - vh();
@@ -643,6 +657,7 @@ document.documentElement.classList.add("js");
     washU = washProgress();
     var idx = washU < 0.34 ? 0 : washU < 0.67 ? 1 : 2;
     steps.forEach(function (s, i) { s.classList.toggle("on", i === idx); });
+    tints.forEach(function (t, i) { t.classList.toggle("on", i === idx); });
     rails.forEach(function (r, i) { r.style.setProperty("--f", Math.max(0, Math.min(1, (washU - i / 3) * 3)).toFixed(3)); });
   }
   window.addEventListener("scroll", onScroll, { passive: true });
